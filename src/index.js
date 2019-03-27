@@ -1,12 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import {render} from 'react-dom'
+import {Provider} from 'react-redux'
+import 'isomorphic-fetch'
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import './globalStyles/bootstrap/custBootstrap.scss'
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+import App from "./components/App";
+import AppNavbar from './components/AppNavbar'
+import IpamTable from './components/IpamTable'
+import './components/fontAwesome/faLibrary.js'
+import configureStore from './configureStore'
+import {URL_REQUEST_ROOT_ELEMENTS_ID, URL_REQUEST_NET_ELEMENTS_BY_ID, URL_REQUEST_HOST_ELEMENTS_BY_ID} from './constants/IpamTable'
+
+const store = configureStore()
+//debug only
+window.store = store
+console.log('API_GET_ROOT_IDS', URL_REQUEST_ROOT_ELEMENTS_ID)
+console.log('API_GET_NET_ELEMENTS_BY_ID', URL_REQUEST_NET_ELEMENTS_BY_ID)
+console.log('API_GET_HOST_ELEMENTS_BY_ID', URL_REQUEST_HOST_ELEMENTS_BY_ID)
+
+render(
+    <Provider store={store}>
+        <App>
+            <App.Header>
+                <AppNavbar />
+            </App.Header>
+            <App.Body>
+                <IpamTable/>
+            </App.Body>
+            {/*<App.Footer>*/}
+
+            {/*</App.Footer>*/}
+        </App>
+    </Provider>,
+    document.getElementById("root"));

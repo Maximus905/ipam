@@ -1,0 +1,12 @@
+.testform {
+    margin: 0;
+    display: block;
+    width: 100%;
+}
+
+.test-div {
+    background-color: #efffbd;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}

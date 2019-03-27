@@ -1,0 +1,11 @@
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
+@import "custom";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+//customized or new classes
+$search-bar-input-height: 2em;
+
+.search-bar-form-control {
+  @extend .form-control;
+  height: $search-bar-input-height;
+}
