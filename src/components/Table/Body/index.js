@@ -84,15 +84,16 @@ class Body extends PureComponent {
 
         const {data, tableContext, tableContext: {jssSheet, joinCss, formBodyData, columnsParams}} = this.props
         const {classes: css} = jssSheet
+
         return (
-                <table className={this.tableInnerStyles(tableContext).join(" ")}>
-                    <thead className={css.hideHeader}>
-                    {this.buildBodyHeader()}
-                    </thead>
-                    <tbody className={joinCss(this.tbodyInnerStyles(tableContext), this.props.cssClasses).join(" ")}>
-                    {data ? formBodyData(data, columnsParams) : this.props.children}
-                    </tbody>
-                </table>
+            <table className={this.tableInnerStyles(tableContext).join(" ")}>
+                <thead className={css.hideHeader}>
+                {this.buildBodyHeader()}
+                </thead>
+                <tbody className={joinCss(this.tbodyInnerStyles(tableContext), this.props.cssClasses).join(" ")}>
+                {data ? formBodyData(data, columnsParams) : this.props.children}
+                </tbody>
+            </table>
         )
     }
 }

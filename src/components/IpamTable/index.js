@@ -1,11 +1,9 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {connectAdvanced} from 'react-redux'
 import PropTypes from 'prop-types'
 // import {check} from 'check-types'
-import isEqual from 'lodash/isEqual'
 import {
     invalidateElements,
-    fetchElementsIfNeeded,
     forceUpdateRootElements,
     forceUpdateRootElementsIds,
     setFilter,
@@ -21,20 +19,46 @@ import {getRootIds, getFilterResults, getFilterItemList, getFilterCursor} from '
 import FilterFactory from '../FilterFactory'
 import axios from 'axios'
 import {URL_FILTERED_SEARCH} from '../../constants/IpamTable'
+import {ContextMenu, MenuItem} from "react-contextmenu"
+import './contextMenu.css'
+import NetModalWindow from '../NetModalWindow'
 
 
 class IpamTable extends Component {
+
+    state = {
+        isNetModalVisible: false,
+        newNet: true,
+        delNet: false,
+        netId: ''
+    }
+
+    onCloseNetModal = () => {
+        this.setState({
+            isNetModalVisible: false,
+            netId: ''
+        })
+    }
+
+    onSubmitNetData = async (prevNetData, newNetData) => {
+        console.log(prevNetData, newNetData)
+        const netIds = new Set()
+        if (newNetData.netId) netIds.add(newNetData.netId)
+        netIds.add(newNetData.parentNetId)
+        if (prevNetData) {
+            netIds.add(prevNetData.netId)
+            netIds.add(prevNetData.parentNetId)
+        }
+        this.props.invalidateElementsInStore([...netIds].filter(item => item !== false), [])
+        //TODO remove deleted elements from store
+        if (netIds.has(false)) this.props.forceUpdateRootItems()
+    }
 
     factory = new FilterFactory()
 
     onChangeFiltersState = async (filterStatements) => {
         const {updateFilterStore} = this.props
         try {
-            // let config = {
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // };
             let response = await axios.post(URL_FILTERED_SEARCH, filterStatements)
             const {searchResult = []} = response.data
 
@@ -64,30 +88,86 @@ class IpamTable extends Component {
         window.fact = this.factory
 
         return (
-            <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} >
-                <Header>
-                    <Row>
-                        <Column accessor={'address'} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
-                        <Column accessor={'mask'} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
-                        <Column accessor={'mask'} minWidth={'130px'} fixed>Network mask</Column>
-                        <Column accessor={'tags'} minWidth={'100px'} maxWidth={'200px'}>Tags</Column>
-                        <Column accessor={'locations'} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
-                        <Column accessor={'vrf'} minWidth={'80px'} fixed>VRF</Column>
-                        <Column accessor={'vrf'} minWidth={'60px'} fixed>VLAN</Column>
-                        <Column accessor={'vrf'} minWidth={'60px'} fixed>vxlan vni</Column>
-                        <Column accessor={'comment'} minWidth={'100px'} maxWidth={'500px'}>Comment</Column>
-                    </Row>
-                </Header>
-                <Body />
-                <Footer>
-                    <div style={{display: 'flex'}}>
-                        {this.filter}
-                        {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
-                        <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} />
-                    </div>
-                    <div> </div>
-                </Footer>
-            </Table>
+            <Fragment>
+                <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} >
+                    <Header>
+                        <Row>
+                            <Column accessor={'address'} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
+                            <Column accessor={'mask'} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
+                            <Column accessor={'mask'} minWidth={'130px'} fixed>Network mask</Column>
+                            <Column accessor={'tags'} minWidth={'100px'} maxWidth={'200px'}>Tags</Column>
+                            <Column accessor={'locations'} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
+                            <Column accessor={'vrf'} minWidth={'80px'} fixed>VRF</Column>
+                            <Column accessor={'vrf'} minWidth={'60px'} fixed>VLAN</Column>
+                            <Column accessor={'vrf'} minWidth={'60px'} fixed>vxlan vni</Column>
+                            <Column accessor={'comment'} minWidth={'100px'} maxWidth={'500px'}>Comment</Column>
+                        </Row>
+                    </Header>
+                    <Body />
+                    <Footer>
+                        <div style={{display: 'flex'}}>
+                            {this.filter}
+                            {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
+                            <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} />
+                        </div>
+                        <div> </div>
+                    </Footer>
+                </Table>
+                <ContextMenu id={"headerTable"}>
+                    <MenuItem data={{foo: 'bar'}} onClick={(e, data) => {console.log(data)}}>
+                        Net Item 1
+                    </MenuItem>
+                </ContextMenu>
+                <ContextMenu id={"netRowMenu"}>
+                    <MenuItem onClick={(e, data) => {
+                        console.log(data)
+                        this.setState({
+                            isNetModalVisible: true,
+                            netId: data.id,
+                            newNet: false,
+                            delNet: false
+                        })
+                    }}>
+                        Редактировать подсеть
+                    </MenuItem>
+                    <MenuItem onClick={(e, data) => {
+                        console.log(data)
+                        this.setState({
+                            isNetModalVisible: true,
+                            netId: '',
+                            newNet: true,
+                            delNet: false
+                        })
+                    }}>
+                        Создать подсеть
+                    </MenuItem>
+                    <MenuItem onClick={(e, data) => {
+                        console.log(data)
+                        this.setState({
+                            isNetModalVisible: true,
+                            netId: data.id,
+                            newNet: false,
+                            delNet: true
+                        })
+                    }}>
+                        Удалить подсеть
+                    </MenuItem>
+                </ContextMenu>
+                <ContextMenu id={"hostRowMenu"}>
+                    <MenuItem onClick={(e, data) => {
+                        console.log(data)
+                        this.setState({
+                            isNetModalVisible: true,
+                            netId: '',
+                            newNet: true
+                        })
+                    }}>
+                        host menu
+                    </MenuItem>
+                </ContextMenu>
+                <NetModalWindow isVisible={this.state.isNetModalVisible} newNet={this.state.newNet} delNet={this.state.delNet} netId={this.state.netId} onClose={this.onCloseNetModal} onSubmit={this.onSubmitNetData} />
+            </Fragment>
+
         );
     }
 
@@ -100,12 +180,15 @@ class IpamTable extends Component {
 
 
     function selectorFactory(dispatch) {
-        let result = {}
+        // let result = {}
         function forceUpdateRootItems () {
             dispatch(forceUpdateRootElements())
         }
         function forceUpdateRootIds () {
             dispatch (forceUpdateRootElementsIds())
+        }
+        function invalidateElementsInStore(netsIds, hostsIds) {
+            dispatch(invalidateElements({netsIds, hostsIds}))
         }
         // function updateElements ({netsIds, hostsIds}) {
         //     dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))
@@ -131,9 +214,10 @@ class IpamTable extends Component {
             const filterStore = getFilterResults(state)
             const filteredItemsList = getFilterItemList(state)
             const filterCursor = getFilterCursor(state)
-            const nextResult = {
+            const result = {
                 forceUpdateRootItems,
                 forceUpdateRootIds,
+                invalidateElementsInStore,
                 updateFilterStore,
                 setFilterCursor,
                 showCurrentFilteredItem,
@@ -144,7 +228,7 @@ class IpamTable extends Component {
                 netsIds,
                 hostsIds
             }
-            if (!isEqual(result, nextResult)) result = nextResult
+            // if (!isEqual(result, nextResult)) result = nextResult
             return result
         }
 }
@@ -152,8 +236,9 @@ class IpamTable extends Component {
 
 IpamTable.propTypes = {
     //from dispatchToProps
-    forceUpdateRoot: PropTypes.func,
+    forceUpdateRootItems: PropTypes.func,
     forceUpdateRootIds: PropTypes.func,
+    invalidateElementsInStore: PropTypes.func,
     updateRootElementsId: PropTypes.func,
     updateElements: PropTypes.func,
     updateFilterStore: PropTypes.func,

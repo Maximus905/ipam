@@ -18,10 +18,10 @@ class NetRecordRow extends PureComponent {
     render() {
         let {id, classes, ipAddress, netmask,comment,vrfName, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
         // let {id, classes, ipAddress, netmask,comment, vrfId, vrfName, vrfRd, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
-
+        const rowProps = {id, rowId, isSelected, rowType: 'network'}
         if (isFetching) {
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
+                <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
                     <Column>...loading</Column>
                     <Column>...loading</Column>
@@ -36,14 +36,14 @@ class NetRecordRow extends PureComponent {
         } else {
             let locations = []
             netLocations = check.object(netLocations) ? netLocations : {}
-            for (let [key, location] of Object.entries(netLocations)) {
+            for (let location of Object.entries(netLocations)) {
                 locations.push(location)
             }
             const icon = isExpanded ?
                 <FontAwesomeIcon icon={"minus"} className={classes.icon} onClick={toggleIconHandler(id)}/> :
                 <FontAwesomeIcon icon={"plus"}  className={classes.icon} onClick={toggleIconHandler(id)}/>
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
+                <Row {...rowProps}>
                     <Column>{this.lvlIndent()}{icon}{ipAddress}</Column>
                     {/*<Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>*/}
                     <Column>{netChildren.length}/{hostChildren.length}</Column>

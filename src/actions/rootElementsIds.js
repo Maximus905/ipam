@@ -4,6 +4,7 @@ import {
     INVALIDATE_ROOT_ELEMENTS_ID,
 } from '../constants/actions'
 import {fetchElementsIfNeeded} from './netItems'
+import axios from 'axios'
 import {URL_REQUEST_ROOT_ELEMENTS_ID} from '../constants/IpamTable'
 
 export function requestRootElementsId() {
@@ -20,14 +21,8 @@ export function invalidateRootElementsId() {
 function fetchRootElementsId() {
     return async (dispatch) => {
         dispatch(requestRootElementsId())
-        const request = new Request(URL_REQUEST_ROOT_ELEMENTS_ID, {
-            mode: 'cors',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        })
-        const response = await fetch(request)
-        const {rootElementsIds} = await response.json()
+        const res = await axios.get(URL_REQUEST_ROOT_ELEMENTS_ID)
+        const {rootElementsIds} = res.data
         dispatch(receiveRootElementsId(rootElementsIds))
     }
 }

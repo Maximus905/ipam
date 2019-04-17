@@ -37,29 +37,29 @@ const netItemsFilterStoreSlice = (itemsIds, store) => {
     })
     return result
 }
-const hostItemsDataSlice = (itemsIds, store) => {
-    const {netData} = store
-    const result = {}
-    itemsIds.forEach((itemId) => {
-        const {id, isSelected, isExpanded} = netData.hosts[itemId]
-        result[id] = {isSelected, isExpanded}
-    })
-    return result
-}
+// const hostItemsDataSlice = (itemsIds, store) => {
+//     const {netData} = store
+//     const result = {}
+//     itemsIds.forEach((itemId) => {
+//         const {id, isSelected, isExpanded} = netData.hosts[itemId]
+//         result[id] = {isSelected, isExpanded}
+//     })
+//     return result
+// }
 
 export const showFilteredItem = ((prevItemList, prevIdx) => (idx) => {
     // if (prevIdx === idx) return () => {}
 
     return (dispatch, getState) => {
-        const {filter, netData} = getState()
-        const {itemList, cursor, hostIdBackupList, netIdBackupList, hostItemsBackup, netItemsBackup} = filter
+        const {filter} = getState()
+        const {itemList, netIdBackupList} = filter
         if (!itemList || (itemList.length && itemList.length === 0)) return
         const currentItem = itemList[idx]
         const prewItem = prevIdx !==undefined ? itemList[prevIdx] : {}
 
         if (check.not.object(currentItem)) return
 
-        const {id, ip, rec_type, ip_path} = currentItem
+        const {id, rec_type, ip_path} = currentItem
         const path = check.string(ip_path) ? ip_path.split(',').map((item) => parseInt(item)) : []
         const netPathIds = [...path]
         const hostsIds = []
@@ -102,9 +102,9 @@ export const showFilteredItem = ((prevItemList, prevIdx) => (idx) => {
 
 export function restoreSavedStates () {
     return (dispatch, getState) => {
-        const {filter, netData} = getState()
-        const {hostIdBackupList, netIdBackupList, hostItemsBackup, netItemsBackup} = filter
-        const {selectedNets, selectedHosts} = netData
+        const {filter} = getState()
+        const {netItemsBackup} = filter
+        // const {selectedNets, selectedHosts} = netData
         // if (selectedNets.length > 0) dispatch(deselectNetItems(selectedNets))
         // if (selectedHosts.length > 0) dispatch(deselectHostItems(selectedHosts))
         if (check.nonEmptyObject(netItemsBackup)) {

@@ -4,14 +4,15 @@ import PropTypes from 'prop-types';
 
 class ChildrenRowsContainer extends PureComponent {
     render() {
-        const {netsIds, hostsIds, lvl} = this.props
+        const {parentNetId, netsIds, hostsIds, lvl} = this.props
         return (
-           <RowsContainer netsIds={netsIds} hostsIds={hostsIds} lvl={lvl} />
+           <RowsContainer netsIds={netsIds} hostsIds={hostsIds} lvl={lvl} parentNetId={parentNetId} />
         );
     }
 }
 
 ChildrenRowsContainer.propTypes = {
+    parentNetId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     netsIds: PropTypes.array,
     hostsIds: PropTypes.array,
     lvl: PropTypes.number,

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import {tableConnect} from '../TableContext'
 import Row from '../Row'
 import Column from '../Column'
+import {ContextMenu, ContextMenuTrigger, MenuItem} from 'react-contextmenu'
+
 
 
 class Header extends PureComponent {
@@ -69,6 +71,13 @@ class Header extends PureComponent {
                 </thead>
             </table>
         )
+        //return (
+        //    <ContextMenuTrigger id={"headerTableMenu"} renderTag="table" attributes={{className: joinCss(this.headerInnerStyles(), cssClasses)}} collect={()=>({'baz': 'test'})}>
+        //        <thead className={joinCss(this.headerInnerStyles(), cssClasses)}>
+        //        {this.buildHeaderRows()}
+        //        </thead>
+        //    </ContextMenuTrigger>
+        //)
     }
 }
 

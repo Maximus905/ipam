@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import {MIN_SEARCH_LENGTH, SEARCH_TIMEOUT} from './constants'
-import check from "check-types"
 
 /**
  * in this class is used customized bootstrap classes

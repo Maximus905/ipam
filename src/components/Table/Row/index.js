@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {tableConnect} from '../TableContext'
 import Column from '../Column'
+import {ContextMenuTrigger} from "react-contextmenu"
 
 class Row extends Component {
     innerStyles = () => {
@@ -19,18 +20,28 @@ class Row extends Component {
         return result
 
     }
-    rowId = null
+    // rowId = null
 
     render() {
-        const {isHeader, isFooter, rowRef: rowId} = this.props
+        const {isHeader, isFooter, rowType, rowId = null, id, tableContext: {filterComponentsByType, joinCss, jssSheet: {classes: css}, createRowRef}} = this.props
+        // const {isHeader, isFooter, rowId} = this.props
         const injectedProps = isHeader ? {isHeader: true, } : (isFooter ? {isFooter: true, } : {})
-        const {tableContext: {filterComponentsByType, joinCss, jssSheet: {classes: css}, createRowRef}} = this.props
+        if (rowType === 'network') {
+
+        }
+        const contextMenuId = (rowType) => {
+            if (rowType === 'network') return 'netRowMenu'
+            if (rowType === 'host') return 'hostRowMenu'
+            return ''
+        }
 
         return (
-            <tr className={joinCss(this.innerStyles(), this.props.cssClasses).join(" ")} data-id={rowId} ref={rowId ? createRowRef(rowId) : null}>
+            <ContextMenuTrigger disable={isHeader || isFooter} id={contextMenuId(rowType)} renderTag="tr" attributes={{
+                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId) : null
+            }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}
                 {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={css.scrollBodySz} />}
-            </tr>
+            </ContextMenuTrigger>
         )
     }
     componentDidMount() {
@@ -48,7 +59,9 @@ Row.propTypes = {
         PropTypes.array,
         PropTypes.string
     ]), //custom css classes
-    rowId: PropTypes.any, //if exists - invoke createRowRef to create ref
+    rowId: PropTypes.any, //if exists, is used by createRowRef for creating ref
+    rowType: PropTypes.oneOf(['network', 'host']),
+    id: PropTypes.number, //item's id (DB id)
     isSelected: PropTypes.bool,
 }
 Row.defaultProps = {}

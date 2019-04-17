@@ -7429,6 +7429,13 @@ react-bootstrap@0.32.1:
     uncontrollable "^4.1.0"
     warning "^3.0.0"
 
+react-contextmenu@^2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/react-contextmenu/-/react-contextmenu-2.11.0.tgz#ec57614e6d687ceaec5c0ba97d56a302c9551d17"
+  dependencies:
+    classnames "^2.2.5"
+    object-assign "^4.1.0"
+
 react-dev-utils@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-8.0.0.tgz#7c5b227a45a32ea8ff7fbc318f336cf9e2c6e34c"
