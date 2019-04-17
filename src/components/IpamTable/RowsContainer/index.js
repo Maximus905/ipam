@@ -19,9 +19,9 @@ class RowsContainer extends PureComponent {
                 this.childrenNetsIds = this.childrenNetsIds.concat(data.netChildren)
                 this.childrenHostsIds = this.childrenHostsIds.concat(data.hostChildren)
                 return (
-                    <React.Fragment key={'h' + data.id}>
-                        <NetRecordRow {...data} lvl={lvl} toggleIconHandler={toggleIconHandler} rowId={'net-' + data.id}/>
-                        <ChildrenRowsContainer netsIds={data.netChildren} hostsIds={data.hostChildren} lvl={lvl + 1} />
+                    <React.Fragment key={'n' + data.id}>
+                        <NetRecordRow {...data} lvl={lvl} toggleIconHandler={toggleIconHandler} rowId={'net-' + data.id} />
+                        <ChildrenRowsContainer netsIds={data.netChildren} hostsIds={data.hostChildren} lvl={lvl + 1}/>
                     </React.Fragment>
 
                 )
@@ -34,7 +34,7 @@ class RowsContainer extends PureComponent {
             }})
         const hostRows = hostsData.map(data => {
             return (
-                <HostRecordRow {...data} lvl={lvl} key={'n' + data.id} rowId={'host-' + data.id} />
+                <HostRecordRow {...data} lvl={lvl} key={'h' + data.id} rowId={'host-' + data.id} />
             )})
         return (
 

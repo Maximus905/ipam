@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import injectSheet from 'react-jss'
 import PropTypes from 'prop-types';
 import check from 'check-types'
+import {ContextMenuTrigger} from 'react-contextmenu'
 
 import {Row, Column} from '../../Table'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -18,10 +19,10 @@ class NetRecordRow extends PureComponent {
     render() {
         let {id, classes, ipAddress, netmask,comment,vrfName, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
         // let {id, classes, ipAddress, netmask,comment, vrfId, vrfName, vrfRd, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
-
+        const rowProps = {id, rowId, isSelected, rowType: 'network'}
         if (isFetching) {
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
+                <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
                     <Column>...loading</Column>
                     <Column>...loading</Column>
@@ -43,9 +44,9 @@ class NetRecordRow extends PureComponent {
                 <FontAwesomeIcon icon={"minus"} className={classes.icon} onClick={toggleIconHandler(id)}/> :
                 <FontAwesomeIcon icon={"plus"}  className={classes.icon} onClick={toggleIconHandler(id)}/>
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
-                    <Column>{this.lvlIndent()}{icon}{ipAddress}</Column>
-                    {/*<Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>*/}
+                <Row {...rowProps}>
+                    {/*<Column>{this.lvlIndent()}{icon}{ipAddress}</Column>*/}
+                    <Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>
                     <Column>{netChildren.length}/{hostChildren.length}</Column>
                     <Column>{netmask}</Column>
                     <Column></Column>

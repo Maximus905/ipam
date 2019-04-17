@@ -14,11 +14,11 @@ class HostRecordRow extends PureComponent {
 
     render() {
         // const {id, ipAddress, macAddress, comment, isFetching, isExpanded, isSelected, rowId} = this.props
-        const {ipAddress, isFetching, isSelected, rowId} = this.props
-
+        const {id, ipAddress, isFetching, isSelected, rowId} = this.props
+        const rowProps = {id, rowId, isSelected, rowType: 'host'}
         if (isFetching) {
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
+                <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
                     <Column>...loading</Column>
                     <Column>...loading</Column>
@@ -32,7 +32,7 @@ class HostRecordRow extends PureComponent {
             );
         } else {
             return (
-                <Row rowId={rowId} isSelected={isSelected}>
+                <Row {...rowProps}>
                     {/*<Column>{this.lvlIndent()}{ipAddress} - {id}</Column>*/}
                     <Column>{this.lvlIndent()}{ipAddress}</Column>
                     <Column></Column>
