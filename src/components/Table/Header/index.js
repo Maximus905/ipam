@@ -64,20 +64,20 @@ class Header extends PureComponent {
 
     render() {
         const {cssClasses, tableContext: {joinCss}} = this.props
-        // return (
-        //     <table className={this.tableInnerStyles().join(" ")}>
-        //         <thead className={joinCss(this.headerInnerStyles(), cssClasses)}>
-        //         {this.buildHeaderRows()}
-        //         </thead>
-        //     </table>
-        // )
         return (
-            <ContextMenuTrigger id={"headerTableMenu"} renderTag="table" attributes={{className: joinCss(this.headerInnerStyles(), cssClasses)}} collect={()=>({'baz': 'test'})}>
+            <table className={this.tableInnerStyles().join(" ")}>
                 <thead className={joinCss(this.headerInnerStyles(), cssClasses)}>
                 {this.buildHeaderRows()}
                 </thead>
-            </ContextMenuTrigger>
+            </table>
         )
+        //return (
+        //    <ContextMenuTrigger id={"headerTableMenu"} renderTag="table" attributes={{className: joinCss(this.headerInnerStyles(), cssClasses)}} collect={()=>({'baz': 'test'})}>
+        //        <thead className={joinCss(this.headerInnerStyles(), cssClasses)}>
+        //        {this.buildHeaderRows()}
+        //        </thead>
+        //    </ContextMenuTrigger>
+        //)
     }
 }
 

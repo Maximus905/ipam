@@ -32,10 +32,11 @@ class Row extends Component {
         const contextMenuId = (rowType) => {
             if (rowType === 'network') return 'netRowMenu'
             if (rowType === 'host') return 'hostRowMenu'
-            return 'unknown'
+            return ''
         }
+
         return (
-            <ContextMenuTrigger id={contextMenuId(rowType)} renderTag="tr" attributes={{
+            <ContextMenuTrigger disable={isHeader || isFooter} id={contextMenuId(rowType)} renderTag="tr" attributes={{
                 className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId) : null
             }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}

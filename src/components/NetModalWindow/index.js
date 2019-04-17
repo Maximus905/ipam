@@ -50,8 +50,9 @@ class NetModalWindow extends Component {
     initialNetData = {}
     currentNetData = () => {
         const {netIp, netComment, vrfId} = this.state
-        const {newNet, netId} = this.props
+        const {delNet, newNet, netId} = this.props
         return {
+            delNet,
             newNet,
             netId,
             netIp,
@@ -67,7 +68,7 @@ class NetModalWindow extends Component {
                 params: {netId}
             })
             if (res.errors) {
-                throw 'Error update tree after saving data!'
+                throw new Error('Error update tree after saving data!')
             }
             const {parentNetId} = response.data
             res = {parentNetId}
@@ -135,6 +136,9 @@ class NetModalWindow extends Component {
             console.log('ERROR: ', e)
             alert(e)
             this.setState({saving: false})
+            if (this.currentNetData().delNet) {
+                setTimeout(() => {this.handleClose()}, 700)
+            }
         }
     }
 
@@ -187,12 +191,20 @@ class NetModalWindow extends Component {
     }
 
     render() {
-        const {isVisible, netId, newNet} = this.props
+        const {isVisible, netId, newNet, delNet} = this.props
         const {dataReady, dataLoading, vrfList, vrfId, netIp, netComment} = this.state
         const modalBody = () => {
             if (!isVisible || !dataReady) return null
             if (dataLoading) return <h3 align="center">Загрузка данных...</h3>
-
+            if (delNet) {
+                return (
+                    <Row>
+                        <Col md={12}>
+                            <h3 className="text-center">Подтвердите удаление подсети <strong><mark>{netIp}</mark></strong></h3>
+                        </Col>
+                    </Row>
+                )
+            }
             return (
                 <Fragment>
                     <Row>
@@ -205,7 +217,30 @@ class NetModalWindow extends Component {
                 </Fragment>
             )
         }
-        const modalTitle = () => newNet ? 'Новая подсеть' : 'Редактирование подсети'
+        const modalTitle = () => delNet ? 'Удаление подсети' : (newNet ? 'Новая подсеть' : 'Редактирование подсети')
+        if (delNet) {
+            return (
+                <Modal show={isVisible} onHide={this.handleClose} >
+                    <ModalHeader closeButton>
+                        <Modal.Title>{modalTitle()}</Modal.Title>
+                    </ModalHeader>
+                    <ModalBody className={custCss.modalBodySmall} >
+                        {modalBody()}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Row>
+                            <Col md={8}>
+                                <h3 align="center" style={{margin: 0}}>{this.state.saving ? 'Удаление...' : ''}</h3>
+                            </Col>
+                            <Col md={4}>
+                                <Button onClick={this.handleClose} bsStyle="danger" disabled={this.state.saving} >Отмена</Button>
+                                <Button onClick={this.handleSubmit} bsStyle="success" disabled={this.state.saving}>Удалить</Button>
+                            </Col>
+                        </Row>
+                    </ModalFooter>
+                </Modal>
+            )
+        }
         return (
             <Modal show={isVisible} onHide={this.handleClose} bsSize="large" >
                 <ModalHeader closeButton>
@@ -234,10 +269,10 @@ class NetModalWindow extends Component {
 
     async componentDidUpdate() {
         this.clearStateIfGetInvisible()
-        const {netId, newNet, isVisible} = this.props
+        const {netId, newNet, delNet, isVisible} = this.props
         // this.updateStateFromProps()
         const {dataReady, dataLoading} = this.state
-        if (isVisible && netId && !newNet && !dataReady && !dataLoading) {
+        if (isVisible && netId && !newNet && !delNet && !dataReady && !dataLoading) {
             this.setState({dataLoading: true})
             try {
                 const response1 = await Promise.all([
@@ -245,9 +280,7 @@ class NetModalWindow extends Component {
                     this.fetchVrfList(),
                     this.getParentNetworkId(netId)
                 ])
-                console.log(response1)
                 const [{netData}, {vrfList: vrfRawData}, {parentNetId}] = response1
-                console.log(netData)
                 const {net_ip: netIp, net_comment: netComment, vrf_id: vrfId} = netData
                 this.initialNetData = ((serverData, parentNetId) => {
                     const {net_id, net_ip, net_comment, vrf_id} = serverData
@@ -259,9 +292,7 @@ class NetModalWindow extends Component {
                         vrfId: vrf_id
                     }
                 })(netData, parentNetId)
-                window.test = this.initialNetData
                 const vrfList = this.vrfList(vrfRawData)
-                console.log('NET VRF', vrfList)
                 this.setState({dataLoading: false, dataReady: true, netIp, netComment, vrfId, vrfList})
             } catch (e) {
                 console.log('Loading net data ERROR', e.toString())
@@ -275,6 +306,25 @@ class NetModalWindow extends Component {
             const vrfList = this.vrfList(vrfRawData)
             console.log('NET VRF', vrfList)
             this.setState({dataLoading: false, dataReady: true, vrfList})
+        } else if (isVisible && delNet && !dataReady && ! dataLoading) {
+            this.setState({dataLoading: true})
+            const response = await Promise.all([
+                this.fetchNetData(netId),
+                this.getParentNetworkId(netId)
+            ])
+            const [{netData}, {parentNetId}] = response
+            const {net_ip: netIp, net_comment: netComment, vrf_id: vrfId} = netData
+            this.initialNetData = ((serverData, parentNetId) => {
+                const {net_id, net_ip, net_comment, vrf_id} = serverData
+                return {
+                    parentNetId,
+                    netId: net_id,
+                    netIp: net_ip,
+                    netComment: net_comment,
+                    vrfId: vrf_id
+                }
+            })(netData, parentNetId)
+            this.setState({dataLoading: false, dataReady: true, netIp, netComment, vrfId})
         }
     }
 }
@@ -282,7 +332,8 @@ class NetModalWindow extends Component {
 NetModalWindow.propTypes = {
     isVisible: PropTypes.bool,
     netId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    newNet: PropTypes.bool,
+    newNet: PropTypes.bool, // set mode of creation network
+    delNet: PropTypes.bool, // set mode of delete network
     onClose: PropTypes.func,
     onSubmit: PropTypes.func, //only if saving updated data is successful, this be invoked (if you need update table after store data i.e.)
     onCreateSubmit: PropTypes.func, //only if saving new network is successful, this be invoked (if you need update table after store data i.e.)

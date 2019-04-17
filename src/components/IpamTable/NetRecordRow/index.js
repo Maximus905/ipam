@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react';
 import injectSheet from 'react-jss'
 import PropTypes from 'prop-types';
 import check from 'check-types'
-import {ContextMenuTrigger} from 'react-contextmenu'
 
 import {Row, Column} from '../../Table'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -37,7 +36,7 @@ class NetRecordRow extends PureComponent {
         } else {
             let locations = []
             netLocations = check.object(netLocations) ? netLocations : {}
-            for (let [key, location] of Object.entries(netLocations)) {
+            for (let location of Object.entries(netLocations)) {
                 locations.push(location)
             }
             const icon = isExpanded ?
@@ -45,8 +44,8 @@ class NetRecordRow extends PureComponent {
                 <FontAwesomeIcon icon={"plus"}  className={classes.icon} onClick={toggleIconHandler(id)}/>
             return (
                 <Row {...rowProps}>
-                    {/*<Column>{this.lvlIndent()}{icon}{ipAddress}</Column>*/}
-                    <Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>
+                    <Column>{this.lvlIndent()}{icon}{ipAddress}</Column>
+                    {/*<Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>*/}
                     <Column>{netChildren.length}/{hostChildren.length}</Column>
                     <Column>{netmask}</Column>
                     <Column></Column>

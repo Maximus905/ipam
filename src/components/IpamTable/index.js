@@ -2,10 +2,8 @@ import React, {Component, Fragment} from 'react'
 import {connectAdvanced} from 'react-redux'
 import PropTypes from 'prop-types'
 // import {check} from 'check-types'
-import isEqual from 'lodash/isEqual'
 import {
     invalidateElements,
-    fetchElementsIfNeeded,
     forceUpdateRootElements,
     forceUpdateRootElementsIds,
     setFilter,
@@ -20,7 +18,7 @@ import RowsContainer from './RowsContainer'
 import {getRootIds, getFilterResults, getFilterItemList, getFilterCursor} from './selectors'
 import FilterFactory from '../FilterFactory'
 import axios from 'axios'
-import {URL_FILTERED_SEARCH, GET_NET_PARENT} from '../../constants/IpamTable'
+import {URL_FILTERED_SEARCH} from '../../constants/IpamTable'
 import {ContextMenu, MenuItem} from "react-contextmenu"
 import './contextMenu.css'
 import NetModalWindow from '../NetModalWindow'
@@ -31,6 +29,7 @@ class IpamTable extends Component {
     state = {
         isNetModalVisible: false,
         newNet: true,
+        delNet: false,
         netId: ''
     }
 
@@ -44,13 +43,14 @@ class IpamTable extends Component {
     onSubmitNetData = async (prevNetData, newNetData) => {
         console.log(prevNetData, newNetData)
         const netIds = new Set()
-        netIds.add(newNetData.netId)
+        if (newNetData.netId) netIds.add(newNetData.netId)
         netIds.add(newNetData.parentNetId)
         if (prevNetData) {
             netIds.add(prevNetData.netId)
             netIds.add(prevNetData.parentNetId)
         }
         this.props.invalidateElementsInStore([...netIds].filter(item => item !== false), [])
+        //TODO remove deleted elements from store
         if (netIds.has(false)) this.props.forceUpdateRootItems()
     }
 
@@ -59,11 +59,6 @@ class IpamTable extends Component {
     onChangeFiltersState = async (filterStatements) => {
         const {updateFilterStore} = this.props
         try {
-            // let config = {
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // };
             let response = await axios.post(URL_FILTERED_SEARCH, filterStatements)
             const {searchResult = []} = response.data
 
@@ -129,7 +124,8 @@ class IpamTable extends Component {
                         this.setState({
                             isNetModalVisible: true,
                             netId: data.id,
-                            newNet: false
+                            newNet: false,
+                            delNet: false
                         })
                     }}>
                         Редактировать подсеть
@@ -139,10 +135,22 @@ class IpamTable extends Component {
                         this.setState({
                             isNetModalVisible: true,
                             netId: '',
-                            newNet: true
+                            newNet: true,
+                            delNet: false
                         })
                     }}>
                         Создать подсеть
+                    </MenuItem>
+                    <MenuItem onClick={(e, data) => {
+                        console.log(data)
+                        this.setState({
+                            isNetModalVisible: true,
+                            netId: data.id,
+                            newNet: false,
+                            delNet: true
+                        })
+                    }}>
+                        Удалить подсеть
                     </MenuItem>
                 </ContextMenu>
                 <ContextMenu id={"hostRowMenu"}>
@@ -154,10 +162,10 @@ class IpamTable extends Component {
                             newNet: true
                         })
                     }}>
-                        Создать подсеть
+                        host menu
                     </MenuItem>
                 </ContextMenu>
-                <NetModalWindow isVisible={this.state.isNetModalVisible} newNet={this.state.newNet} netId={this.state.netId} onClose={this.onCloseNetModal} onSubmit={this.onSubmitNetData} />
+                <NetModalWindow isVisible={this.state.isNetModalVisible} newNet={this.state.newNet} delNet={this.state.delNet} netId={this.state.netId} onClose={this.onCloseNetModal} onSubmit={this.onSubmitNetData} />
             </Fragment>
 
         );
