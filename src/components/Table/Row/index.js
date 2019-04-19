@@ -26,9 +26,6 @@ class Row extends Component {
         const {isHeader, isFooter, rowType, rowId = null, id, tableContext: {filterComponentsByType, joinCss, jssSheet: {classes: css}, createRowRef}} = this.props
         // const {isHeader, isFooter, rowId} = this.props
         const injectedProps = isHeader ? {isHeader: true, } : (isFooter ? {isFooter: true, } : {})
-        if (rowType === 'network') {
-
-        }
         const contextMenuId = (rowType) => {
             if (rowType === 'network') return 'netRowMenu'
             if (rowType === 'host') return 'hostRowMenu'
@@ -36,7 +33,7 @@ class Row extends Component {
         }
 
         return (
-            <ContextMenuTrigger disable={isHeader || isFooter} id={contextMenuId(rowType)} renderTag="tr" attributes={{
+            <ContextMenuTrigger disable={isHeader || isFooter} holdToDisplay={-1} id={contextMenuId(rowType)} renderTag="tr" attributes={{
                 className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId) : null
             }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}

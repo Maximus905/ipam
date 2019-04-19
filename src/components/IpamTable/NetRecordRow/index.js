@@ -36,7 +36,7 @@ class NetRecordRow extends PureComponent {
         } else {
             let locations = []
             netLocations = check.object(netLocations) ? netLocations : {}
-            for (let location of Object.entries(netLocations)) {
+            for (let location of Object.values(netLocations)) {
                 locations.push(location)
             }
             const icon = isExpanded ?

@@ -6,6 +6,7 @@ import {
     invalidateElements,
     forceUpdateRootElements,
     forceUpdateRootElementsIds,
+    fetchElementsIfNeeded,
     setFilter,
     setCursor,
 } from '../../actions'
@@ -46,7 +47,7 @@ class IpamTable extends Component {
         if (newNetData.netId) netIds.add(newNetData.netId)
         netIds.add(newNetData.parentNetId)
         if (prevNetData) {
-            netIds.add(prevNetData.netId)
+            if (prevNetData.delNet === false) netIds.add(prevNetData.netId)
             netIds.add(prevNetData.parentNetId)
         }
         this.props.invalidateElementsInStore([...netIds].filter(item => item !== false), [])
@@ -159,10 +160,11 @@ class IpamTable extends Component {
                         this.setState({
                             isNetModalVisible: true,
                             netId: '',
-                            newNet: true
+                            newNet: true,
+                            delNet: false
                         })
                     }}>
-                        host menu
+                        Создать подсеть
                     </MenuItem>
                 </ContextMenu>
                 <NetModalWindow isVisible={this.state.isNetModalVisible} newNet={this.state.newNet} delNet={this.state.delNet} netId={this.state.netId} onClose={this.onCloseNetModal} onSubmit={this.onSubmitNetData} />
@@ -189,6 +191,7 @@ class IpamTable extends Component {
         }
         function invalidateElementsInStore(netsIds, hostsIds) {
             dispatch(invalidateElements({netsIds, hostsIds}))
+            dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))
         }
         // function updateElements ({netsIds, hostsIds}) {
         //     dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))

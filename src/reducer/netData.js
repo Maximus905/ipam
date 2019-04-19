@@ -19,7 +19,7 @@ const initialDataStore = {
     selectedNets: [],
     selectedHosts: []
 }
-const networkElementInitialState = {
+const networkElementInitialState = () => ({
     netLocations: {},
     netChildren: [],
     hostChildren: [],
@@ -27,7 +27,7 @@ const networkElementInitialState = {
     isSelected: false,
     isFetching: false,
     isExpanded: false,
-}
+})
 const hostElementInitialState = {
     didInvalidate: false,
     isSelected: false,
@@ -41,7 +41,7 @@ const hostElementInitialState = {
  * @param netData
  * @returns {*} changed state of element
  */
-const handleNetworkElement = (stateOfElement = networkElementInitialState, actionType, netData) => {
+const handleNetworkElement = (stateOfElement = networkElementInitialState(), actionType, netData) => {
 
     switch (actionType) {
         case REQUEST_ELEMENTS:

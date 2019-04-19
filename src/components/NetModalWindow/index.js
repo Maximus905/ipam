@@ -200,7 +200,7 @@ class NetModalWindow extends Component {
                 return (
                     <Row>
                         <Col md={12}>
-                            <h3 className="text-center">Подтвердите удаление подсети <strong><mark>{netIp}</mark></strong></h3>
+                            <h4 className="text-center">Подтвердите удаление подсети <strong><mark>{netIp}</mark></strong></h4>
                         </Col>
                     </Row>
                 )
