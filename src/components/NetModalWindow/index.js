@@ -88,7 +88,6 @@ class NetModalWindow extends Component {
 
 
     clearState = ((initialState) => () => {
-        console.log('INITIAL STATE', initialState)
         this.setState(cloneDeep(initialState))
     })(cloneDeep(this.state))
 
@@ -127,7 +126,6 @@ class NetModalWindow extends Component {
             const {data} = result
             if (data.errors) throw data.errors.join("\n")
             this.setState({saving: false})
-            console.log('SAVE RESULT', data.result, data)
 
             const {netId, parentNetId} = data
             this.props.onSubmit(this.initialNetData, {...this.currentNetData(), netId, parentNetId})
@@ -304,7 +302,6 @@ class NetModalWindow extends Component {
             const response1 = await this.fetchVrfList()
             const {vrfList: vrfRawData} = response1
             const vrfList = this.vrfList(vrfRawData)
-            console.log('NET VRF', vrfList)
             this.setState({dataLoading: false, dataReady: true, vrfList})
         } else if (isVisible && delNet && !dataReady && ! dataLoading) {
             this.setState({dataLoading: true})

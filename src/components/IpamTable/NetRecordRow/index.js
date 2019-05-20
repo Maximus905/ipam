@@ -17,7 +17,6 @@ class NetRecordRow extends PureComponent {
 
     render() {
         let {id, classes, ipAddress, netmask,comment,vrfName, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
-        // let {id, classes, ipAddress, netmask,comment, vrfId, vrfName, vrfRd, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
         const rowProps = {id, rowId, isSelected, rowType: 'network'}
         if (isFetching) {
             return (

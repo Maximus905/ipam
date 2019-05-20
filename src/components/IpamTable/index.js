@@ -42,7 +42,6 @@ class IpamTable extends Component {
     }
 
     onSubmitNetData = async (prevNetData, newNetData) => {
-        console.log(prevNetData, newNetData)
         const netIds = new Set()
         if (newNetData.netId) netIds.add(newNetData.netId)
         netIds.add(newNetData.parentNetId)
@@ -121,7 +120,6 @@ class IpamTable extends Component {
                 </ContextMenu>
                 <ContextMenu id={"netRowMenu"}>
                     <MenuItem onClick={(e, data) => {
-                        console.log(data)
                         this.setState({
                             isNetModalVisible: true,
                             netId: data.id,
@@ -132,7 +130,6 @@ class IpamTable extends Component {
                         Редактировать подсеть
                     </MenuItem>
                     <MenuItem onClick={(e, data) => {
-                        console.log(data)
                         this.setState({
                             isNetModalVisible: true,
                             netId: '',
@@ -143,7 +140,6 @@ class IpamTable extends Component {
                         Создать подсеть
                     </MenuItem>
                     <MenuItem onClick={(e, data) => {
-                        console.log(data)
                         this.setState({
                             isNetModalVisible: true,
                             netId: data.id,
@@ -156,7 +152,6 @@ class IpamTable extends Component {
                 </ContextMenu>
                 <ContextMenu id={"hostRowMenu"}>
                     <MenuItem onClick={(e, data) => {
-                        console.log(data)
                         this.setState({
                             isNetModalVisible: true,
                             netId: '',
@@ -191,15 +186,7 @@ class IpamTable extends Component {
         }
         function invalidateElementsInStore(netsIds, hostsIds) {
             dispatch(invalidateElements({netsIds, hostsIds}))
-            dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))
         }
-        // function updateElements ({netsIds, hostsIds}) {
-        //     dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))
-        // }
-        // function forceUpdateElements ({netsIds, hostsIds}) {
-        //     dispatch(invalidateElements({netsIds, hostsIds}))
-        //     dispatch(fetchElementsIfNeeded({netsIds, hostsIds}))
-        // }
         function updateFilterStore ({searchResult}) {
             dispatch(setFilter({searchResult}))
         }
@@ -231,7 +218,6 @@ class IpamTable extends Component {
                 netsIds,
                 hostsIds
             }
-            // if (!isEqual(result, nextResult)) result = nextResult
             return result
         }
 }

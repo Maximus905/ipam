@@ -9,15 +9,16 @@ import ChildrenRowsContainer from "../ChildrenRowsContainer";
 
 class RowsContainer extends PureComponent {
 
-    childrenNetsIds = []
-    childrenHostsIds = []
+    netIdsForUpdate = []
+    hostIdsForUpdate = []
 
     render() {
         const {netsData, hostsData, toggleIconHandler, lvl} = this.props
         const netRows = netsData.map(data => {
             if (data.isExpanded) {
-                this.childrenNetsIds = this.childrenNetsIds.concat(data.netChildren)
-                this.childrenHostsIds = this.childrenHostsIds.concat(data.hostChildren)
+                if (data.didInvalidate) this.netIdsForUpdate.push(data.id)
+                this.netIdsForUpdate = this.netIdsForUpdate.concat(data.netChildren)
+                this.hostIdsForUpdate = this.hostIdsForUpdate.concat(data.hostChildren)
                 return (
                     <React.Fragment key={'n' + data.id}>
                         <NetRecordRow {...data} lvl={lvl} toggleIconHandler={toggleIconHandler} rowId={'net-' + data.id} />
@@ -26,6 +27,7 @@ class RowsContainer extends PureComponent {
 
                 )
             } else {
+                if (data.didInvalidate) this.netIdsForUpdate.push(data.id)
                 return (
                     <React.Fragment key={'h' + data.id}>
                         <NetRecordRow {...data} lvl={lvl} toggleIconHandler={toggleIconHandler} rowId={'net-' + data.id} />
@@ -47,11 +49,11 @@ class RowsContainer extends PureComponent {
 
     componentDidMount() {
         const {updateDataIfNeeded} = this.props
-        updateDataIfNeeded({netsIds: this.childrenNetsIds, hostsIds: this.childrenHostsIds})
+        updateDataIfNeeded({netsIds: this.netIdsForUpdate, hostsIds: this.hostIdsForUpdate})
     }
     componentDidUpdate() {
         const {updateDataIfNeeded} = this.props
-        updateDataIfNeeded({netsIds: this.childrenNetsIds, hostsIds: this.childrenHostsIds})
+        updateDataIfNeeded({netsIds: this.netIdsForUpdate, hostsIds: this.hostIdsForUpdate})
     }
 }
 
