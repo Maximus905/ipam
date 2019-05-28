@@ -9,12 +9,15 @@ const BASE_URL = (() => {
     return developMode ? `${protocol}//${DEVELOPED_BASE_URL}` : `${protocol}//${hostname}${port==='' ? '' : ':'}${port}`
 })()
 
-export const URL_REQUEST_ROOT_ELEMENTS_ID = `${BASE_URL}/networks/rootElements.json`
-export const URL_REQUEST_NET_ELEMENTS_BY_ID = `${BASE_URL}/networks/netElementsByIds.json`
-export const URL_REQUEST_HOST_ELEMENTS_BY_ID = `${BASE_URL}/networks/hostElementsByIds.json`
-export const URL_FILTERED_SEARCH = `${BASE_URL}/networks/filteredSearch.json`
+export const URL_REQUEST_ROOT_ELEMENTS_ID = `${BASE_URL}/ipam/rootElements.json`
+export const URL_REQUEST_NET_ELEMENTS_BY_ID = `${BASE_URL}/ipam/netElementsByIds.json`
+export const URL_REQUEST_HOST_ELEMENTS_BY_ID = `${BASE_URL}/ipam/hostElementsByIds.json`
+export const URL_FILTERED_SEARCH = `${BASE_URL}/ipam/search.json`
 export const NET_DATA_URL = `${BASE_URL}/api/getNetData.json`
 export const VRF_LIST_URL= `${BASE_URL}/api/getVrfList.json`
 export const NET_SUBMIT_URL = `${BASE_URL}/api/saveNetData.json`
 export const CHECK_ABILITY_DELETE_NETWORK = `${BASE_URL}/api/saveNetData.json`
 export const GET_NET_PARENT = `${BASE_URL}/api/getNetParent.json`
+
+export const MAX_DEV_AGE = 1500
+export const LAST_UPDATE_SHIFT_HOURS = 4

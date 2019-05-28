@@ -9,6 +9,10 @@ const style = {
     icon: {
         marginRight: RIGHT_MARGIN_ICON
     },
+    bgOldDevice: {
+        color: '#f00 !important' ,
+        // backgroundColor: '#d9534f !important'
+    }
 }
 export {LVL_INDENT_WIDTH}
 export default style

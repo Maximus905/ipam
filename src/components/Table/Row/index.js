@@ -34,10 +34,10 @@ class Row extends Component {
 
         return (
             <ContextMenuTrigger disable={isHeader || isFooter} holdToDisplay={-1} id={contextMenuId(rowType)} renderTag="tr" attributes={{
-                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId) : null
+                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId, rowType) : null
             }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}
-                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={css.scrollBodySz} />}
+                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={'scrollBodyCell ' + css.scrollBodySz} />}
             </ContextMenuTrigger>
         )
     }

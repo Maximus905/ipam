@@ -68,7 +68,7 @@ class IpamTable extends Component {
         }
     }
 
-    filter = this.factory.createFilter('simpleSearch', ['ip'], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
+    filter = this.factory.createFilter('simpleSearch', [{"nets": ["net_ip", "net_comment", "vrf_name", "vrf_comment", "net_location"]}, {"host_ports": [""]}], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
     // filter2 = this.factory.createFilter('simpleSearch', ['ip', 'net_ip', 'office'], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
 
 
@@ -92,15 +92,18 @@ class IpamTable extends Component {
                 <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} >
                     <Header>
                         <Row>
-                            <Column accessor={'address'} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
-                            <Column accessor={'mask'} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
-                            <Column accessor={'mask'} minWidth={'130px'} fixed>Network mask</Column>
-                            <Column accessor={'tags'} minWidth={'100px'} maxWidth={'200px'}>Tags</Column>
-                            <Column accessor={'locations'} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
-                            <Column accessor={'vrf'} minWidth={'80px'} fixed>VRF</Column>
-                            <Column accessor={'vrf'} minWidth={'60px'} fixed>VLAN</Column>
-                            <Column accessor={'vrf'} minWidth={'60px'} fixed>vxlan vni</Column>
-                            <Column accessor={'comment'} minWidth={'100px'} maxWidth={'500px'}>Comment</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
+                            <Column accessor={''} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
+                            <Column accessor={''} minWidth={'130px'} fixed>Network mask</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
+                            <Column accessor={''} minWidth={'100px'} maxWidth={'300px'}>Comment</Column>
+                            <Column accessor={''} minWidth={'150px'} maxWidth={'300px'}>Интерфейс</Column>
+                            <Column accessor={''} minWidth={'150px'} maxWidth={'300px'}>Оборудование</Column>
+                            <Column accessor={''} minWidth={'80px'} fixed>VRF</Column>
+                            <Column accessor={''} minWidth={'80px'} fixed>AS</Column>
+                            <Column accessor={''} minWidth={'100px'} fixed>Тип</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'300px'}>Hostname</Column>
+                            <Column accessor={''} minWidth={'100px'} maxWidth={'300px'}>DNS</Column>
                         </Row>
                     </Header>
                     <Body />
@@ -108,7 +111,7 @@ class IpamTable extends Component {
                         <div style={{display: 'flex'}}>
                             {this.filter}
                             {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
-                            <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} />
+                            <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} setFilterCursor={this.props.setFilterCursor} filterCursor={this.props.filterCursor} />
                         </div>
                         <div> </div>
                     </Footer>

@@ -124,7 +124,11 @@ class Table extends PureComponent {
                 backgroundColor: this.props.bodyStriped ? darkenColor(theme.bodyBgColor, theme.stripedColorFactor) : theme.bodyBgColor
             },
             '& td': {
-                padding: theme.paddingBodyCell
+                padding: theme.paddingBodyCell,
+                wordWrap: 'break-word'
+            },
+            '& td.scrollBodyCell': {
+                padding: 0
             },
             '&:hover': {
                 backgroundColor: darkenColor(theme.bodyBgColor, theme.hoverColorFactor)
@@ -243,6 +247,7 @@ class Table extends PureComponent {
             return sum + column.minWidth
         }, 0 )
         const scrollSize = this.scroll.width
+        window.scrollSize = scrollSize
 
         //calculate free space for distribute
         let freeSpace = Math.trunc(dimensions.containerWidth - sumOfMinWidth - scrollSize)
@@ -357,36 +362,18 @@ class Table extends PureComponent {
         })
     }
 
-    createRowRef = (id) => {
+    createRowRef = (id, rowType) => {
         const ref = React.createRef()
-        this.tableRefs.rows[id] = ref
+        this.tableRefs.rows[`${id}_${rowType}`] = ref
         // console.log('***************')
         return ref
     }
 
-
-    tableContext = {
-        theme: theme,
-        states: {},
-        shareState: (state,name) => {this.tableContext.states[name] = state},
-        getState: (name) => this.tableContext.states[name],
-        updateData: this.updateData,
-        formBodyData: this.props.formBodyData ? this.props.formBodyData : this.formBodyData,
-        cssStyles: this.tableStyles,
-        dimensions: {
-            containerWidth: 0,
-            columnsSizes: [],
-            columnsWidth: 0, // sum of current columns width
-        },
-        columnsCss: [],
-        columnsParams: [],
-        jssSheet: this.jssSheet,
-        filterComponentsByType: this.filterComponentsByType,
-        joinCss: Table.joinCss,
-        createRowRef: this.createRowRef,
-        tableRefs: this.tableRefs,
-        scrollPosition: this.props.scrollPosition
+    getRowRef(id, rowType) {
+        return this.tableRefs.rows[`${id}_${rowType}`]
     }
+
+
 
     setColumnsCss(header) {
         const {columnsCss} = this.tableContext
@@ -432,25 +419,31 @@ class Table extends PureComponent {
         this.scroll.height = scrollSizes.scrollbarHeight
     }
 
-    scrollToRow(rowId, alignment, offset = 0) {
-        const row = this.tableRefs.rows[rowId]
-        if (!row) return
-        const body = this.tableRefs.bodyContainer
-        const bodyXY = body.current.getBoundingClientRect()
-        const rowXY = row.current.getBoundingClientRect()
-        // body.current.scrollTop = rowXY.y - bodyXY.y - offset
-        body.current.scrollBy(0, rowXY.y - bodyXY.y - offset)
+    // scrollToRow(rowId, alignment, offset = 0) {
+    //     const row = this.tableRefs.rows[rowId]
+    //     if (!row) return
+    //     const body = this.tableRefs.bodyContainer
+    //     const bodyXY = body.current.getBoundingClientRect()
+    //     const rowXY = row.current.getBoundingClientRect()
+    //     // body.current.scrollTop = rowXY.y - bodyXY.y - offset
+    //     body.current.scrollBy(0, rowXY.y - bodyXY.y - offset)
+    // }
+    scrollToRow(rowId, rowType, alignment, offset = 0) {
+        const rowRef = this.getRowRef(rowId, rowType)
+        const bodyRef = this.tableRefs.bodyContainer
+        if (!rowRef || !bodyRef) return
+        this.scrollAt(bodyRef, rowRef, alignment, offset)
     }
 
     /**
      *
      * @param {Object} container - box that will be scrolled (ref)
-     * @param {Object} element - element that will be positioned relative top or bottom of box
+     * @param {Object} element - element that will be positioned relative top or bottom of box(ref)
      * @param {('top'|'bottom')} position - where's measured offset from
      * @param {number} [offset] - offset from 'position' in px
      */
     scrollAt(container, element, position, offset = 0) {
-        if (!(position && container && container.current && element && element.current)) return
+        if (!(position && (position === 'top' || position === 'bottom') && container && container.current && element && element.current)) return
         let yScroll = 0
         const el = element.current.getBoundingClientRect()
         const box = container.current.getBoundingClientRect()
@@ -466,6 +459,30 @@ class Table extends PureComponent {
         }
         if (yScroll === 0) return
         container.current.scrollBy(0, yScroll)
+    }
+
+    tableContext = {
+        theme: theme,
+        states: {},
+        shareState: (state,name) => {this.tableContext.states[name] = state},
+        getState: (name) => this.tableContext.states[name],
+        updateData: this.updateData,
+        formBodyData: this.props.formBodyData ? this.props.formBodyData : this.formBodyData,
+        cssStyles: this.tableStyles,
+        dimensions: {
+            containerWidth: 0,
+            columnsSizes: [],
+            columnsWidth: 0, // sum of current columns width
+        },
+        columnsCss: [],
+        columnsParams: [],
+        jssSheet: this.jssSheet,
+        filterComponentsByType: this.filterComponentsByType,
+        joinCss: Table.joinCss,
+        createRowRef: this.createRowRef,
+        tableRefs: this.tableRefs,
+        scrollPosition: this.props.scrollPosition,
+        scrollToRow: this.scrollToRow
     }
 
 

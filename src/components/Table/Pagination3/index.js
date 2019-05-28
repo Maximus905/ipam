@@ -78,6 +78,7 @@ class Pagination3 extends PureComponent {
     }
 
     onClickNextPage = () => {
+        const {setFilterCursor} = this.props
         const {current} = this.state
         const listLength = this.props.filteredItemsList.length
         if (current < listLength) {
@@ -89,6 +90,7 @@ class Pagination3 extends PureComponent {
         }
     }
     onClickPrevPage = () => {
+        const {setFilterCursor} = this.props
         const {current} = this.state
         if (current > 0) {
             const newCurrent = current - 1
@@ -101,6 +103,7 @@ class Pagination3 extends PureComponent {
     }
 
     onClickFirstPage = () => {
+        const {setFilterCursor} = this.props
         const newCurrent = 0
         this.setState({
             itemNumberInput: (newCurrent + 1).toString(),
@@ -108,6 +111,7 @@ class Pagination3 extends PureComponent {
         })
     }
     onClickLastPage = () => {
+        const {setFilterCursor} = this.props
         const newCurrent = this.props.filteredItemsList.length - 1
         this.setState({
             itemNumberInput: (newCurrent + 1).toString(),
@@ -146,6 +150,7 @@ class Pagination3 extends PureComponent {
     componentDidUpdate() {
         const {filteredItemsList} = this.props
         this.updateState(filteredItemsList)
+        console.log(this.props.filterCursor)
     }
 }
 
@@ -158,6 +163,8 @@ Pagination3.propTypes = {
             ip_path: PropTypes.string
         })
     ),
+    setFilterCursor: PropTypes.func,
+    filterCursor: PropTypes.number,
     onChange: PropTypes.func,
     onHideFilter: PropTypes.func,
     onNewItemsList: PropTypes.func
