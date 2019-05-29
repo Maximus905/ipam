@@ -539,7 +539,7 @@ class Table extends PureComponent {
 
     //should be called only when pass data via props and this data change
     async componentDidUpdate(prevProps) {
-        const {data: prevData, scrollPosition: prevScrollPosition} = prevProps
+        const {data: prevData} = prevProps
         const {data, scrollPosition} = this.props
         if (prevData !== data) {
              await this.updateData()

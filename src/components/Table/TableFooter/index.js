@@ -38,7 +38,7 @@ class TableFooter extends PureComponent {
         }
     }
     parseData = (data) => {
-        const {tableContext: {columnsParams, jssSheet: {classes: css}}} = this.props
+        const {tableContext: {columnsParams}} = this.props
         if (check.not.array(data)) return null
 
         return data.map((rowData, rowIndex) => {
@@ -59,7 +59,7 @@ class TableFooter extends PureComponent {
     }
 
     buildTableFooterHeader = () => {
-        const {columnsCss, jssSheet: {classes: css}, joinCss} = this.props.tableContext
+        const {columnsCss, jssSheet: {classes: css}} = this.props.tableContext
         if (columnsCss.length === 0) {
             console.log("Body lvl: columns css array is empty! Can't build header in tableFooter!")
             return null
@@ -72,7 +72,7 @@ class TableFooter extends PureComponent {
     }
 
     render() {
-        const {data, tableContext, tableContext: {joinCss, jssSheet: {classes}}} = this.props
+        const {data, tableContext, tableContext: {jssSheet: {classes}}} = this.props
         return (
             <table className={this.tableInnerStyles(tableContext).join(" ")}>
                 <thead className={classes.hideHeader}>

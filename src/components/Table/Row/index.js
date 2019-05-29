@@ -23,7 +23,7 @@ class Row extends Component {
     // rowId = null
 
     render() {
-        const {isHeader, isFooter, rowType, rowId = null, id, tableContext: {filterComponentsByType, joinCss, jssSheet: {classes: css}, createRowRef}} = this.props
+        const {isHeader, isFooter, rowType, id, tableContext: {filterComponentsByType, joinCss, jssSheet: {classes: css}, createRowRef}} = this.props
         // const {isHeader, isFooter, rowId} = this.props
         const injectedProps = isHeader ? {isHeader: true, } : (isFooter ? {isFooter: true, } : {})
         const contextMenuId = (rowType) => {

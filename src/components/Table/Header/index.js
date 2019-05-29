@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {tableConnect} from '../TableContext'
 import Row from '../Row'
 import Column from '../Column'
-import {ContextMenu, ContextMenuTrigger, MenuItem} from 'react-contextmenu'
+// import {ContextMenu, ContextMenuTrigger, MenuItem} from 'react-contextmenu'
 
 
 

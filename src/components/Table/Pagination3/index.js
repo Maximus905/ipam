@@ -159,7 +159,6 @@ class Pagination3 extends PureComponent {
     componentDidUpdate() {
         const {filteredItemsList} = this.props
         this.updateState(filteredItemsList)
-        console.log('searching', this.props.searchingState ? 'true' : 'false')
     }
 }
 
