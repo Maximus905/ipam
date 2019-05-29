@@ -34,10 +34,10 @@ class Row extends Component {
 
         return (
             <ContextMenuTrigger disable={isHeader || isFooter} holdToDisplay={-1} id={contextMenuId(rowType)} renderTag="tr" attributes={{
-                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId, ref: rowId ? createRowRef(rowId, rowType) : null
+                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId,
             }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}
-                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={'scrollBodyCell ' + css.scrollBodySz} />}
+                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={'scrollBodyCell ' + css.scrollBodySz}  ref={rowId ? createRowRef(rowId, rowType) : null} />}
             </ContextMenuTrigger>
         )
     }
@@ -46,8 +46,10 @@ class Row extends Component {
     }
 
     componentWillUnmount() {
+        const {rowType, rowId = null, tableContext: {deleteRowRef}} = this.props
         // console.log('unmount ', this.rowId)
         //TODO implement removing ref of row in DidUnmount
+        deleteRowRef(rowId, rowType)
     }
 }
 

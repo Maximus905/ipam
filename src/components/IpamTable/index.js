@@ -83,13 +83,13 @@ class IpamTable extends Component {
 
     render() {
         const data = {body: {netsIds: this.props.netsIds, hostsIds: this.props.hostsIds}}
-        const {filteredItemsList} = this.props
+        const {filteredItemsList, showCurrentFilteredItem, restoreStateFromFilter, setFilterCursor, filterCursor, currentFilteredItem} = this.props
 
         window.fact = this.factory
 
         return (
             <Fragment>
-                <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} >
+                <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} scrollPosition={currentFilteredItem} >
                     <Header>
                         <Row>
                             <Column accessor={''} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
@@ -111,7 +111,7 @@ class IpamTable extends Component {
                         <div style={{display: 'flex'}}>
                             {this.filter}
                             {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
-                            <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} setFilterCursor={this.props.setFilterCursor} filterCursor={this.props.filterCursor} />
+                            <Pagination3 filteredItemsList={filteredItemsList} onChange={showCurrentFilteredItem} onNewItemsList={restoreStateFromFilter} onHideFilter={restoreStateFromFilter} setFilterCursor={setFilterCursor} filterCursor={filterCursor} />
                         </div>
                         <div> </div>
                     </Footer>
@@ -198,15 +198,26 @@ class IpamTable extends Component {
         }
         function showCurrentFilteredItem (idx) {
             dispatch(showFilteredItem(idx))
+            console.log('show', this)
         }
         function restoreStateFromFilter () {
             dispatch(restoreSavedStates())
+        }
+        function getCurrentFilteredItem (state) {
+            const filteredItemsList = getFilterItemList(state)
+            const filterCursor = getFilterCursor(state)
+            // console.log(filteredItemsList, filterCursor, filteredItemsList[filterCursor])
+            if (filteredItemsList && filteredItemsList.length && filteredItemsList.length > 0) {
+                return filteredItemsList[filterCursor]
+            }
+            return {}
         }
         return (state, ownProps) => {
             const {netsIds, hostsIds} = getRootIds(state)
             const filterStore = getFilterResults(state)
             const filteredItemsList = getFilterItemList(state)
             const filterCursor = getFilterCursor(state)
+            const currentFilteredItem = getCurrentFilteredItem(state)
             const result = {
                 forceUpdateRootItems,
                 forceUpdateRootIds,
@@ -214,10 +225,12 @@ class IpamTable extends Component {
                 updateFilterStore,
                 setFilterCursor,
                 showCurrentFilteredItem,
+                getCurrentFilteredItem,
                 restoreStateFromFilter,
                 filterStore,
                 filteredItemsList,
                 filterCursor,
+                currentFilteredItem,
                 netsIds,
                 hostsIds
             }
@@ -235,6 +248,12 @@ IpamTable.propTypes = {
     updateElements: PropTypes.func,
     updateFilterStore: PropTypes.func,
     setFilterCursor: PropTypes.func,
+    currentFilteredItem: PropTypes.shape({
+        id: PropTypes.number,
+        ip: PropTypes.string,
+        rec_type: PropTypes.string,
+        ip_path: PropTypes.string
+    }),
     showCurrentFilteredItem: PropTypes.func,
     filterStore: PropTypes.object,
     filteredItemsList: PropTypes.array,

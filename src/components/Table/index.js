@@ -369,11 +369,14 @@ class Table extends PureComponent {
         return ref
     }
 
+    deleteRowRef = (id, rowType) => {
+        if (check.number(id) && this.tableRefs.rows[`${id}_${rowType}`]) {
+            delete this.tableRefs.rows[`${id}_${rowType}`]
+        }
+    }
     getRowRef(id, rowType) {
         return this.tableRefs.rows[`${id}_${rowType}`]
     }
-
-
 
     setColumnsCss(header) {
         const {columnsCss} = this.tableContext
@@ -480,6 +483,7 @@ class Table extends PureComponent {
         filterComponentsByType: this.filterComponentsByType,
         joinCss: Table.joinCss,
         createRowRef: this.createRowRef,
+        deleteRowRef: this.deleteRowRef,
         tableRefs: this.tableRefs,
         scrollPosition: this.props.scrollPosition,
         scrollToRow: this.scrollToRow
@@ -526,21 +530,28 @@ class Table extends PureComponent {
         this.updateColumns()
         await this.updateData()
         // this.scrollToRow(this.props.scrollPosition)
-        this.scrollAt(bodyContainer, targetRow, 'bottom', 0)
+        // this.scrollAt(bodyContainer, targetRow, 'bottom', 0)
 
         window.tabRefs = this.tableRefs
     }
 
     //should be called only when pass data via props and this data change
     async componentDidUpdate(prevProps) {
-        const bodyContainer = this.tableRefs.bodyContainer
-        const targetRow = this.tableRefs.rows[this.props.scrollPosition]
-
-        if (prevProps.data !== this.props.data) {
+        const {data: prevData, scrollPosition: prevScrollPosition} = prevProps
+        const {data, scrollPosition} = this.props
+        if (prevData !== data) {
              await this.updateData()
         }
         // this.scrollToRow(this.props.scrollPosition)
-        this.scrollAt(bodyContainer, targetRow, 'bottom', 20)
+
+        if (prevScrollPosition !== scrollPosition) {
+            const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
+            if (scrollPosition && scrollPosition.id && targetRow) {
+                const bodyContainer = this.tableRefs.bodyContainer
+                console.log('scroll to ', targetRow)
+                this.scrollAt(bodyContainer, targetRow, 'top', 60)
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -569,7 +580,12 @@ Table.propTypes = {
 
     isStretch: PropTypes.bool, //allow stretch table
 
-    scrollPosition: PropTypes.oneOfType([PropTypes.string, PropTypes.number]) //ref to row. if value is defined - scroll to this row
+    scrollPosition: PropTypes.shape({
+        id: PropTypes.number,
+        ip: PropTypes.string,
+        rec_type: PropTypes.string,
+        ip_path: PropTypes.string
+    })
 };
 Table.defaultProps = {
     fetchData: DEFAULT_VALUES.fetchData.method,
