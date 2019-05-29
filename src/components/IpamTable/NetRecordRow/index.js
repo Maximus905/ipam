@@ -16,12 +16,15 @@ class NetRecordRow extends PureComponent {
     }
 
     render() {
-        let {id, classes, ipAddress, netmask,comment,vrfName, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
+        let {id, classes, ip, netmask, comment, vrfName, bgpAs, netLocations, netChildren, hostChildren, isFetching, isExpanded, isSelected, toggleIconHandler, rowId} = this.props
         const rowProps = {id, rowId, isSelected, rowType: 'network'}
         if (isFetching) {
             return (
                 <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
+                    <Column>...loading</Column>
+                    <Column>...loading</Column>
+                    <Column>...loading</Column>
                     <Column>...loading</Column>
                     <Column>...loading</Column>
                     <Column>...loading</Column>
@@ -43,16 +46,19 @@ class NetRecordRow extends PureComponent {
                 <FontAwesomeIcon icon={"plus"}  className={classes.icon} onClick={toggleIconHandler(id)}/>
             return (
                 <Row {...rowProps}>
-                    <Column>{this.lvlIndent()}{icon}{ipAddress}</Column>
-                    {/*<Column>{this.lvlIndent()}{icon}{ipAddress} - {rowId}</Column>*/}
+                    <Column>{this.lvlIndent()}{icon}{ip}</Column>
+                    {/*<Column>{this.lvlIndent()}{icon}{ip} - {rowId}</Column>*/}
                     <Column>{netChildren.length}/{hostChildren.length}</Column>
                     <Column>{netmask}</Column>
-                    <Column></Column>
                     <Column>{locations.join("; ")}</Column>
-                    <Column>{vrfName}</Column>
-                    <Column></Column>
-                    <Column></Column>
                     <Column>{comment}</Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column>{vrfName}</Column>
+                    <Column>{bgpAs}</Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
                 </Row>
             );
         }

@@ -28,6 +28,7 @@ import NetModalWindow from '../NetModalWindow'
 class IpamTable extends Component {
 
     state = {
+        searching: false,
         isNetModalVisible: false,
         newNet: true,
         delNet: false,
@@ -59,16 +60,19 @@ class IpamTable extends Component {
     onChangeFiltersState = async (filterStatements) => {
         const {updateFilterStore} = this.props
         try {
+            this.setState({searching: true})
             let response = await axios.post(URL_FILTERED_SEARCH, filterStatements)
             const {searchResult = []} = response.data
 
             updateFilterStore({searchResult})
+            this.setState({searching: false})
         } catch (error) {
             console.log('Error: ', error.response)
+            this.setState({searching: false})
         }
     }
 
-    filter = this.factory.createFilter('simpleSearch', ['ip'], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
+    filter = this.factory.createFilter('simpleSearch', [{"nets": ["net_ip", "net_comment", "vrf_name", "vrf_comment", "net_location"]}, {"host_ports": [""]}], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
     // filter2 = this.factory.createFilter('simpleSearch', ['ip', 'net_ip', 'office'], {width: '200px', defaultStatement: 'beginWith', minLengthForSearch: 3, placeholder: 'Search...', hideUnusedRows: false})
 
 
@@ -83,24 +87,27 @@ class IpamTable extends Component {
 
     render() {
         const data = {body: {netsIds: this.props.netsIds, hostsIds: this.props.hostsIds}}
-        const {filteredItemsList} = this.props
+        const {filteredItemsList, showCurrentFilteredItem, restoreStateFromFilter, setFilterCursor, filterCursor, currentFilteredItem} = this.props
 
         window.fact = this.factory
 
         return (
             <Fragment>
-                <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} >
+                <Table width={'100%'} data={data} formBodyData={this.renderBodyData} fetchData={this.fetchData} scrollPosition={currentFilteredItem} >
                     <Header>
                         <Row>
-                            <Column accessor={'address'} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
-                            <Column accessor={'mask'} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
-                            <Column accessor={'mask'} minWidth={'130px'} fixed>Network mask</Column>
-                            <Column accessor={'tags'} minWidth={'100px'} maxWidth={'200px'}>Tags</Column>
-                            <Column accessor={'locations'} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
-                            <Column accessor={'vrf'} minWidth={'80px'} fixed>VRF</Column>
-                            <Column accessor={'vrf'} minWidth={'60px'} fixed>VLAN</Column>
-                            <Column accessor={'vrf'} minWidth={'60px'} fixed>vxlan vni</Column>
-                            <Column accessor={'comment'} minWidth={'100px'} maxWidth={'500px'}>Comment</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'400px'}>IP address</Column>
+                            <Column accessor={''} minWidth={'100px'} fixed>Statistics<br/>(Nets/Hosts)</Column>
+                            <Column accessor={''} minWidth={'130px'} fixed>Network mask</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'500px'}>Locations</Column>
+                            <Column accessor={''} minWidth={'100px'} maxWidth={'300px'}>Comment</Column>
+                            <Column accessor={''} minWidth={'150px'} maxWidth={'300px'}>Интерфейс</Column>
+                            <Column accessor={''} minWidth={'150px'} maxWidth={'300px'}>Оборудование</Column>
+                            <Column accessor={''} minWidth={'80px'} fixed>VRF</Column>
+                            <Column accessor={''} minWidth={'80px'} fixed>AS</Column>
+                            <Column accessor={''} minWidth={'100px'} fixed>Тип</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'300px'}>Hostname</Column>
+                            <Column accessor={''} minWidth={'100px'} maxWidth={'300px'}>DNS</Column>
                         </Row>
                     </Header>
                     <Body />
@@ -108,7 +115,7 @@ class IpamTable extends Component {
                         <div style={{display: 'flex'}}>
                             {this.filter}
                             {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
-                            <Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} onNewItemsList={this.props.restoreStateFromFilter} onHideFilter={this.props.restoreStateFromFilter} />
+                            <Pagination3 filteredItemsList={filteredItemsList} searchingState={this.state.searching} onChange={showCurrentFilteredItem} onNewItemsList={restoreStateFromFilter} onHideFilter={restoreStateFromFilter} setFilterCursor={setFilterCursor} filterCursor={filterCursor} />
                         </div>
                         <div> </div>
                     </Footer>
@@ -195,15 +202,26 @@ class IpamTable extends Component {
         }
         function showCurrentFilteredItem (idx) {
             dispatch(showFilteredItem(idx))
+            console.log('show', this)
         }
         function restoreStateFromFilter () {
             dispatch(restoreSavedStates())
+        }
+        function getCurrentFilteredItem (state) {
+            const filteredItemsList = getFilterItemList(state)
+            const filterCursor = getFilterCursor(state)
+            // console.log(filteredItemsList, filterCursor, filteredItemsList[filterCursor])
+            if (filteredItemsList && filteredItemsList.length && filteredItemsList.length > 0) {
+                return filteredItemsList[filterCursor]
+            }
+            return {}
         }
         return (state, ownProps) => {
             const {netsIds, hostsIds} = getRootIds(state)
             const filterStore = getFilterResults(state)
             const filteredItemsList = getFilterItemList(state)
             const filterCursor = getFilterCursor(state)
+            const currentFilteredItem = getCurrentFilteredItem(state)
             const result = {
                 forceUpdateRootItems,
                 forceUpdateRootIds,
@@ -211,10 +229,12 @@ class IpamTable extends Component {
                 updateFilterStore,
                 setFilterCursor,
                 showCurrentFilteredItem,
+                getCurrentFilteredItem,
                 restoreStateFromFilter,
                 filterStore,
                 filteredItemsList,
                 filterCursor,
+                currentFilteredItem,
                 netsIds,
                 hostsIds
             }
@@ -232,6 +252,12 @@ IpamTable.propTypes = {
     updateElements: PropTypes.func,
     updateFilterStore: PropTypes.func,
     setFilterCursor: PropTypes.func,
+    currentFilteredItem: PropTypes.shape({
+        id: PropTypes.number,
+        ip: PropTypes.string,
+        rec_type: PropTypes.string,
+        ip_path: PropTypes.string
+    }),
     showCurrentFilteredItem: PropTypes.func,
     filterStore: PropTypes.object,
     filteredItemsList: PropTypes.array,

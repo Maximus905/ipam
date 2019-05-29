@@ -50,15 +50,16 @@ const handleNetworkElement = (stateOfElement = networkElementInitialState(), act
                 isFetching: true
             })
         case RECEIVE_ELEMENTS:
-            const {netId: id, address: ipAddress, netmask, comment, vrfId, vrfName, vrfRd, netLocations, net_children: netChildren, host_children: hostChildren} = netData
+            const {net_id: id, net_ip: ip, net_mask: netmask, net_comment: comment, vrf_id: vrfId, vrf_name: vrfName,vrf_rd:  vrfRd, net_children: netChildren, host_children: hostChildren, net_location: netLocations, bgp_as: bgpAs} = netData
             return Object.assign({}, stateOfElement, {
                 id,
-                ipAddress,
+                ip,
                 netmask,
                 comment,
                 vrfId,
                 vrfName,
                 vrfRd,
+                bgpAs,
                 netLocations: JSON.parse(netLocations),
                 netChildren: convertToIntArray(netChildren),
                 hostChildren: convertToIntArray(hostChildren),
@@ -87,12 +88,26 @@ const handleHostElement = (stateOfElement = hostElementInitialState, actionType,
                 isFetching: true
             })
         case RECEIVE_ELEMENTS:
-            const {__id: id, ipAddress, comment, macAddress} = hostData
+            const {port_id: id, port_ip: ip, port_masklen: maskLen, port_mask: mask, port_ip_cidr: ipCidr, port_mac: mac, dev_location: location, port_comment: portComment, port_desc: portDescr, port_name: portName, dev_title: devName, dev_type: devType, dev_hostname: hostname, dev_last_update: lastUpdate, dev_last_update_ms: lastUpdateMs, dev_age_h: age, vrf_name: vrfName, dns } = hostData
             return Object.assign({}, stateOfElement, {
                 id,
-                ipAddress,
-                comment,
-                macAddress,
+                ip,
+                maskLen,
+                mask,
+                ipCidr,
+                mac,
+                location,
+                portComment,
+                portDescr,
+                portName,
+                devName,
+                devType,
+                hostname,
+                lastUpdate,
+                lastUpdateMs,
+                age,
+                vrfName,
+                dns,
                 didInvalidate: false,
                 isFetching: false
             })
@@ -139,13 +154,13 @@ const netData = (store = initialDataStore, action) => {
         case RECEIVE_ELEMENTS:
             if (isItterable(networksData)) {
                 for (const data of networksData) {
-                    const {netId: id} = data
+                    const {net_id: id} = data
                     updatedNetworkElements[id] = handleNetworkElement(networks[id], type,data)
                 }
             }
             if (isItterable(hostsData)) {
                 for (const data of hostsData) {
-                    const {__id: id} = data
+                    const {port_id: id} = data
                     updatedHostElements[id] = handleHostElement(hosts[id], type,data)
                 }
             }

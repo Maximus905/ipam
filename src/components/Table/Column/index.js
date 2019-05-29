@@ -32,7 +32,7 @@ class Column extends Component {
                 if (writeParams) this.saveColumnParams()
                 return <th className={joinCss(innerStyles, cssClasses).join(" ")}>{title ? title : children}</th>
             } else {
-                return <td className={joinCss(innerStyles, cssClasses).join(" ")}>{children}</td>
+                return <td className={joinCss(innerStyles, cssClasses).join(" ")} title={this.props.hint}>{children}</td>
             }
     }
 }
@@ -44,6 +44,7 @@ Column.propTypes = {
     writeParams: PropTypes.bool, // for internal use only! if set column have to write its params into tableContext.columnsParams (params like width ...)
     //
     title: PropTypes.string, //if not set will be used children
+    hint: PropTypes.string, //if not set will be used children
     accessor: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.string),
         PropTypes.string

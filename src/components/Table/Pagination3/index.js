@@ -10,42 +10,45 @@ class Pagination3 extends PureComponent {
     state = {
         itemNumberInput: '',
         isVisible: false,
-        current: 0, // index of current item in filteredItemsList. Start from 0!
-        itemsList: {}
+        // current: 0, // index of current item in filteredItemsList. Start from 0!
+        // itemsList: {}
     }
 
     updateState = ((prevItemList) => (newItemList) => {
         if (prevItemList === newItemList && check.array(newItemList) && newItemList.length > 0) {
-            this.props.onChange(this.state.current)
+            this.props.onChange(this.props.filterCursor)
             return
         }
         if (prevItemList === newItemList && !this.state.isVisible) {
             this.props.onHideFilter()
             return
         }
+
         if (check.array(newItemList) && newItemList.length > 0) {
             prevItemList = newItemList
             const newState = {
                 itemNumberInput: '1',
                 isVisible: true,
-                current: 0,
-                itemsList: newItemList
+                // current: 0,
+                // itemsList: newItemList
             }
             this.setState(newState)
             this.props.onNewItemsList()
+            this.props.onChange(this.props.filterCursor)
         } else {
             prevItemList = newItemList
             this.setState({
                 itemNumberInput: '0',
                 isVisible: false,
-                current: 0,
-                itemsList: newItemList
+                // current: 0,
+                // itemsList: newItemList
             })
         }
     })()
 
     currentNumberBlock = (classes) => {
-        const listLength = this.props.filteredItemsList.length
+        const {filteredItemsList} = this.props
+        const listLength = filteredItemsList.length
         return (
             <div className={[classes.pageNumber, classes.pageNumber].join(" ")}>
                 <input type="text" onChange={this.onChangePageNumberBlock} onKeyUp={this.onKeyUpPageNumberBlock} value={this.state.itemNumberInput}/><span>of {listLength}</span>
@@ -59,7 +62,8 @@ class Pagination3 extends PureComponent {
      */
     onChangePageNumberBlock = (e) => {
         const {value} = e.target
-        const inputListLength = check.array(this.props.filteredItemsList) ?  this.props.filteredItemsList.length : 0
+        const {filteredItemsList} = this.props
+        const inputListLength = check.array(filteredItemsList) ?  filteredItemsList.length : 0
         this.setState((prevState) => {
             return {itemNumberInput: (value === "" || (parseInt(value) > 0 && parseInt(value) <= inputListLength)) ? value : prevState.itemNumberInput}
         })
@@ -70,70 +74,79 @@ class Pagination3 extends PureComponent {
      */
     onKeyUpPageNumberBlock = (e) => {
         if (e.keyCode === 13) {
-            this.setState((prevState) => {
-                const itemNumberInput = prevState.itemNumberInput === "" ? "1" : prevState.itemNumberInput
-                return {itemNumberInput, current: parseInt(itemNumberInput) - 1}
-            })
+            const itemNumberInput = this.state.itemNumberInput === "" ? "1" : this.state.itemNumberInput
+            // this.setState({itemNumberInput})
+            this.props.setFilterCursor(parseInt(itemNumberInput) - 1)
         }
     }
 
     onClickNextPage = () => {
-        const {current} = this.state
-        const listLength = this.props.filteredItemsList.length
-        if (current < listLength) {
-            const newCurrent = current + 1
+        const {setFilterCursor, filterCursor, filteredItemsList} = this.props
+        const listLength = filteredItemsList.length
+        if (filterCursor < listLength) {
+            const newFilterCursor = filterCursor + 1
             this.setState({
-                itemNumberInput: (newCurrent + 1).toString(),
-                current: newCurrent
+                itemNumberInput: (newFilterCursor + 1).toString(),
             })
+            setFilterCursor(newFilterCursor)
         }
     }
     onClickPrevPage = () => {
-        const {current} = this.state
-        if (current > 0) {
-            const newCurrent = current - 1
+        const {setFilterCursor, filterCursor} = this.props
+        if (filterCursor > 0) {
+            const newFilterCursor = filterCursor - 1
             this.setState({
-                itemNumberInput: (newCurrent + 1).toString(),
-                current: newCurrent
+                itemNumberInput: (newFilterCursor + 1).toString(),
             })
+            setFilterCursor(newFilterCursor)
         }
 
     }
 
     onClickFirstPage = () => {
-        const newCurrent = 0
+        const {setFilterCursor} = this.props
+        const newFilterCursor = 0
         this.setState({
-            itemNumberInput: (newCurrent + 1).toString(),
-            current: newCurrent
+            itemNumberInput: (newFilterCursor + 1).toString(),
         })
+        setFilterCursor(newFilterCursor)
     }
     onClickLastPage = () => {
-        const newCurrent = this.props.filteredItemsList.length - 1
+        const {setFilterCursor, filteredItemsList} = this.props
+        const listLength = filteredItemsList.length
+        const newFilterCursor = listLength - 1
         this.setState({
-            itemNumberInput: (newCurrent + 1).toString(),
-            current: newCurrent
+            itemNumberInput: (newFilterCursor + 1).toString(),
         })
+        setFilterCursor(newFilterCursor)
     }
 
     render() {
         const {classes, filteredItemsList} = this.props
         const listLength = check.array(filteredItemsList) ?  filteredItemsList.length : 0
-        const {current} = this.state
+        const {filterCursor: current} = this.props
+        if (this.props.searchingState) {
+            return (
+                <div className={[classes.container, classes.containerDc].join(" ")}>
+                    <span>...Searching</span>
+                </div>
+            )
+        }
         if (listLength === 0) return null
         return (
             <div className={[classes.container, classes.containerDc].join(" ")}>
-                <button className={classes.navButton} disabled={current === 0} onClick={this.onClickFirstPage}>
-                    <FontAwesomeIcon icon="fast-backward" className={current === 0 ? classes.disabled : '' } />
+                <button className={classes.navButton} disabled={parseInt(current) === 0} onClick={this.onClickFirstPage}>
+                    <FontAwesomeIcon icon="fast-backward" className={parseInt(current) === 0 ? classes.disabled : '' } />
                 </button>
-                <button className={classes.navButton} disabled={current === 0} onClick={this.onClickPrevPage}>
-                    <FontAwesomeIcon icon="backward" className={current === 0 ? classes.disabled : '' } />
+                <button className={classes.navButton} disabled={parseInt(current) === 0} onClick={this.onClickPrevPage}>
+                    <FontAwesomeIcon icon="backward" className={parseInt(current) === 0 ? classes.disabled : '' } />
                 </button>
                 {this.currentNumberBlock(classes)}
-                <button className={classes.navButton} disabled={current === listLength - 1} onClick={this.onClickNextPage}>
-                    <FontAwesomeIcon icon="forward" className={(current === listLength - 1) ? classes.disabled : '' } />
+                <button className={classes.navButton} disabled={parseInt(current) === listLength - 1} onClick={this.onClickNextPage}>
+                    <FontAwesomeIcon icon="forward" className={(parseInt(current) === listLength - 1) ? classes.disabled : '' } />
                 </button>
-                <button className={classes.navButton} disabled={current === listLength - 1} onClick={this.onClickLastPage}>
-                    <FontAwesomeIcon icon="fast-forward" className={(current === listLength - 1) ? classes.disabled : '' } />
+                <button className={classes.navButton} disabled={parseInt(current) === listLength - 1} onClick={this.onClickLastPage}>
+                    <FontAwesomeIcon icon="fast-forward" className={(parseInt(current) === listLength - 1) ? classes.disabled : '' } />
                 </button>
             </div>
         );
@@ -146,10 +159,12 @@ class Pagination3 extends PureComponent {
     componentDidUpdate() {
         const {filteredItemsList} = this.props
         this.updateState(filteredItemsList)
+        console.log('searching', this.props.searchingState ? 'true' : 'false')
     }
 }
 
 Pagination3.propTypes = {
+    searchingState: PropTypes.bool,
     filteredItemsList: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,
@@ -158,6 +173,8 @@ Pagination3.propTypes = {
             ip_path: PropTypes.string
         })
     ),
+    setFilterCursor: PropTypes.func,
+    filterCursor: PropTypes.number,
     onChange: PropTypes.func,
     onHideFilter: PropTypes.func,
     onNewItemsList: PropTypes.func
