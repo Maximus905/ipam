@@ -34,22 +34,22 @@ class Row extends Component {
 
         return (
             <ContextMenuTrigger disable={isHeader || isFooter} holdToDisplay={-1} id={contextMenuId(rowType)} renderTag="tr" attributes={{
-                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": rowId,
+                className: joinCss(this.innerStyles(), this.props.cssClasses).join(" "), "data-row-type": rowType, "data-id": id,
             }} collect={()=>({rowType, id})}>
                 {filterComponentsByType(this.props.children, Column, injectedProps)}
-                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={'scrollBodyCell ' + css.scrollBodySz}  ref={rowId ? createRowRef(rowId, rowType) : null} />}
+                {isHeader || isFooter ? <td className={css.scrollSz} /> : <td className={'scrollBodyCell ' + css.scrollBodySz}  ref={id ? createRowRef(id, rowType) : null} />}
             </ContextMenuTrigger>
         )
     }
     componentDidMount() {
-        this.rowId = this.props.rowId
+        //this.rowId = this.props.rowId
     }
 
     componentWillUnmount() {
-        const {rowType, rowId = null, tableContext: {deleteRowRef}} = this.props
+        const {rowType, id = null, tableContext: {deleteRowRef}} = this.props
         // console.log('unmount ', this.rowId)
         //TODO implement removing ref of row in DidUnmount
-        deleteRowRef(rowId, rowType)
+        deleteRowRef(id, rowType)
     }
 }
 

@@ -28,6 +28,7 @@ import NetModalWindow from '../NetModalWindow'
 class IpamTable extends Component {
 
     state = {
+        searching: false,
         isNetModalVisible: false,
         newNet: true,
         delNet: false,
@@ -59,12 +60,15 @@ class IpamTable extends Component {
     onChangeFiltersState = async (filterStatements) => {
         const {updateFilterStore} = this.props
         try {
+            this.setState({searching: true})
             let response = await axios.post(URL_FILTERED_SEARCH, filterStatements)
             const {searchResult = []} = response.data
 
             updateFilterStore({searchResult})
+            this.setState({searching: false})
         } catch (error) {
             console.log('Error: ', error.response)
+            this.setState({searching: false})
         }
     }
 
@@ -111,7 +115,7 @@ class IpamTable extends Component {
                         <div style={{display: 'flex'}}>
                             {this.filter}
                             {/*<Pagination3 filteredItemsList={filteredItemsList} onChange={this.props.showCurrentFilteredItem} />*/}
-                            <Pagination3 filteredItemsList={filteredItemsList} onChange={showCurrentFilteredItem} onNewItemsList={restoreStateFromFilter} onHideFilter={restoreStateFromFilter} setFilterCursor={setFilterCursor} filterCursor={filterCursor} />
+                            <Pagination3 filteredItemsList={filteredItemsList} searchingState={this.state.searching} onChange={showCurrentFilteredItem} onNewItemsList={restoreStateFromFilter} onHideFilter={restoreStateFromFilter} setFilterCursor={setFilterCursor} filterCursor={filterCursor} />
                         </div>
                         <div> </div>
                     </Footer>

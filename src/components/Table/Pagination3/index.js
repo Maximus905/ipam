@@ -23,6 +23,7 @@ class Pagination3 extends PureComponent {
             this.props.onHideFilter()
             return
         }
+
         if (check.array(newItemList) && newItemList.length > 0) {
             prevItemList = newItemList
             const newState = {
@@ -124,6 +125,13 @@ class Pagination3 extends PureComponent {
         const {classes, filteredItemsList} = this.props
         const listLength = check.array(filteredItemsList) ?  filteredItemsList.length : 0
         const {filterCursor: current} = this.props
+        if (this.props.searchingState) {
+            return (
+                <div className={[classes.container, classes.containerDc].join(" ")}>
+                    <span>...Searching</span>
+                </div>
+            )
+        }
         if (listLength === 0) return null
         return (
             <div className={[classes.container, classes.containerDc].join(" ")}>
@@ -151,11 +159,12 @@ class Pagination3 extends PureComponent {
     componentDidUpdate() {
         const {filteredItemsList} = this.props
         this.updateState(filteredItemsList)
-        console.log(this.props.filterCursor)
+        console.log('searching', this.props.searchingState ? 'true' : 'false')
     }
 }
 
 Pagination3.propTypes = {
+    searchingState: PropTypes.bool,
     filteredItemsList: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,

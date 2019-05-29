@@ -363,15 +363,20 @@ class Table extends PureComponent {
     }
 
     createRowRef = (id, rowType) => {
-        const ref = React.createRef()
-        this.tableRefs.rows[`${id}_${rowType}`] = ref
-        // console.log('***************')
-        return ref
+        if (check.number(id) && !this.tableRefs.rows[`${id}_${rowType}`]) {
+            const ref = React.createRef()
+            this.tableRefs.rows[`${id}_${rowType}`] = ref
+            // console.log('created', id, rowType)
+            return ref
+        }
+        // console.log('exists', id, rowType)
+        return this.tableRefs.rows[`${id}_${rowType}`]
     }
 
     deleteRowRef = (id, rowType) => {
         if (check.number(id) && this.tableRefs.rows[`${id}_${rowType}`]) {
             delete this.tableRefs.rows[`${id}_${rowType}`]
+            // console.log('deleted', id, rowType)
         }
     }
     getRowRef(id, rowType) {
@@ -521,9 +526,6 @@ class Table extends PureComponent {
     }
 
     async componentDidMount() {
-        const bodyContainer = this.tableRefs.bodyContainer
-        const targetRow = this.tableRefs.rows[this.props.scrollPosition]
-
         this.jssSheet.attach()
         window.addEventListener('resize', this.updateColumns)
 
@@ -543,15 +545,21 @@ class Table extends PureComponent {
              await this.updateData()
         }
         // this.scrollToRow(this.props.scrollPosition)
-
-        if (prevScrollPosition !== scrollPosition) {
-            const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
-            if (scrollPosition && scrollPosition.id && targetRow) {
-                const bodyContainer = this.tableRefs.bodyContainer
-                console.log('scroll to ', targetRow)
-                this.scrollAt(bodyContainer, targetRow, 'top', 60)
-            }
+        // console.log('table didupdate', this.getRowRef(scrollPosition.id, scrollPosition.rec_type),prevScrollPosition !== scrollPosition ? 'true' : 'false')
+        const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
+        if (scrollPosition && scrollPosition.id && targetRow) {
+            const bodyContainer = this.tableRefs.bodyContainer
+            // console.log('scroll to ', targetRow)
+            this.scrollAt(bodyContainer, targetRow, 'top', 60)
         }
+        // if (prevScrollPosition !== scrollPosition) {
+        //     const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
+        //     if (scrollPosition && scrollPosition.id && targetRow) {
+        //         const bodyContainer = this.tableRefs.bodyContainer
+        //         // console.log('scroll to ', targetRow)
+        //         this.scrollAt(bodyContainer, targetRow, 'top', 60)
+        //     }
+        // }
     }
 
     componentWillUnmount() {

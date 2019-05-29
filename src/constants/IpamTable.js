@@ -19,5 +19,5 @@ export const NET_SUBMIT_URL = `${BASE_URL}/api/saveNetData.json`
 export const CHECK_ABILITY_DELETE_NETWORK = `${BASE_URL}/api/saveNetData.json`
 export const GET_NET_PARENT = `${BASE_URL}/api/getNetParent.json`
 
-export const MAX_DEV_AGE = 1500
+export const MAX_DEV_AGE = 72
 export const LAST_UPDATE_SHIFT_HOURS = 4

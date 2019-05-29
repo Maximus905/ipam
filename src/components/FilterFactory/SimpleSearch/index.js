@@ -41,6 +41,15 @@ class SimpleSearch extends PureComponent {
     onChangeHandler = (e) => {
         this.setState({value: e.target.value})
     }
+    /**
+     * change text in input field and value of 'current' in state
+     * @param e
+     */
+    onKeyUpHandler = (e) => {
+        if (e.keyCode === 13) {
+            this.updateParentState()
+        }
+    }
 
 
     render() {
@@ -49,7 +58,7 @@ class SimpleSearch extends PureComponent {
 
         return (
             <div>
-                <input className='search-bar-form-control' style={style} placeholder={placeholder} value={this.state.value} onChange={this.onChangeHandler} />
+                <input className='search-bar-form-control' style={style} placeholder={placeholder} value={this.state.value} onChange={this.onChangeHandler} onKeyUp={this.onKeyUpHandler} />
             </div>
         )
     }
