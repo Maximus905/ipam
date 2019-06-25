@@ -1,24 +1,20 @@
 import {createSelector} from 'reselect'
 
+const getRoots = state => state.rootElementsIds
 const getRootNetsIds = state => state.rootElementsIds.netsIds
 const getRootHostsIds = state => state.rootElementsIds.hostsIds
 
 const getNetworksDataStore = state => state.netData.networks
 const getHostsDataStore = state => state.netData.hosts
 
-const getFilterStore = state => state.filter
 export const getFilterItemList = state => state.filter.itemList
 export const getFilterCursor = state => state.filter.cursor
 
-// const getNetworkItemDataStore = (state, props) => {
-//
-// }
-//
-// const makeGetNetworkData = () => {
-//     return createSelector(
-//         []
-//     )
-// }
+export const getCurrentFilteredItem = createSelector(
+    [getFilterItemList, getFilterCursor],
+    (filterItemList, filterCursor) => filterItemList[filterCursor]
+)
+
 
 export const getRootRowsData = createSelector(
     [getRootNetsIds, getRootHostsIds, getNetworksDataStore, getHostsDataStore],
@@ -41,16 +37,10 @@ export const getRootRowsData = createSelector(
 )
 
 export const getRootIds = createSelector(
-    [getRootNetsIds, getRootHostsIds],
-    (netsIds, hostsIds) => {
-        return {netsIds: netsIds, hostsIds: hostsIds}
+    [getRoots],
+    (roots) => {
+        return {netsIds: roots.netsIds, hostsIds: roots.hostsIds}
     }
 )
 
-export const getFilterResults = createSelector(
-    [getFilterStore],
-    (filter) => {
-        return filter
-    }
-)
 

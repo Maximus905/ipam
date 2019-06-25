@@ -18,3 +18,6 @@ export const dictNetworksTable = "/admin/NetworksTab"
 
 export const HwLogs = "/logs"
 export const PhonesLogs = "/logs/phones"
+
+export const PhonesInfo = "/basePhone"
+export const PhonesAndUsers = "/usersPhone"

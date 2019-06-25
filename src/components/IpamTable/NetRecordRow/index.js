@@ -22,17 +22,17 @@ class NetRecordRow extends PureComponent {
             return (
                 <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
                 </Row>
             );
         } else {

@@ -47,6 +47,7 @@ class SimpleSearch extends PureComponent {
      */
     onKeyUpHandler = (e) => {
         if (e.keyCode === 13) {
+            clearTimeout(this.timerId)
             this.updateParentState()
         }
     }

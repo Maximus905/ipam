@@ -25,13 +25,17 @@ const AppNavbar = () => {
                 <NavItem eventKey={2} href={URL.devices}>
                     Оборудование
                 </NavItem>
-                <NavDropdown eventKey={3} title="IP Planing" id="basic-nav-dropdown-1">
+                <NavDropdown eventKey={7} title="Phones" id="basic-nav-dropdown-1">
+                    <MenuItem eventKey={7.1} href={URL.PhonesInfo}>Телефоны Инфо</MenuItem>
+                    <MenuItem eventKey={7.1} href={URL.PhonesAndUsers}>Телефоны по ФИО</MenuItem>
+                </NavDropdown>
+                <NavDropdown eventKey={3} title="IP Planing" id="basic-nav-dropdown-2">
                     <MenuItem eventKey={3.1} href={URL.ip_ipam}>IPAM</MenuItem>
                 </NavDropdown>
                 <NavItem eventKey={4} href={URL.reports}>
                     Reports
                 </NavItem>
-                <NavDropdown eventKey={5} title="Phone Reports" id="basic-nav-dropdown-1">
+                <NavDropdown eventKey={5} title="Phone Reports" id="basic-nav-dropdown-3">
                     <MenuItem eventKey={5.1} href={URL.reportPhoneByModels}>По моделям</MenuItem>
                     <MenuItem eventKey={5.2} href={URL.reportPhoneByClusters}>По кластерам</MenuItem>
                     <MenuItem eventKey={5.3} href={URL.reportPhoneByNotUsed}>По неиспользуемым</MenuItem>

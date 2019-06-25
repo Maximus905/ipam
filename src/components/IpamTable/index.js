@@ -16,7 +16,7 @@ import {showFilteredItem, restoreSavedStates} from '../../actions'
 import Table from '../Table'
 import {Header, Body, Row, Column, Footer, Pagination3} from '../Table'
 import RowsContainer from './RowsContainer'
-import {getRootIds, getFilterResults, getFilterItemList, getFilterCursor} from './selectors'
+import {getRootIds, getFilterItemList, getFilterCursor, getCurrentFilteredItem} from './selectors'
 import FilterFactory from '../FilterFactory'
 import axios from 'axios'
 import {URL_FILTERED_SEARCH} from '../../constants/IpamTable'
@@ -107,7 +107,7 @@ class IpamTable extends Component {
                             <Column accessor={''} minWidth={'80px'} fixed>AS</Column>
                             <Column accessor={''} minWidth={'100px'} fixed>Тип</Column>
                             <Column accessor={''} minWidth={'200px'} maxWidth={'300px'}>Hostname</Column>
-                            <Column accessor={''} minWidth={'100px'} maxWidth={'300px'}>DNS</Column>
+                            <Column accessor={''} minWidth={'200px'} maxWidth={'300px'}>DNS</Column>
                         </Row>
                     </Header>
                     <Body />
@@ -202,27 +202,17 @@ class IpamTable extends Component {
         }
         function showCurrentFilteredItem (idx) {
             dispatch(showFilteredItem(idx))
-            console.log('show', this)
         }
         function restoreStateFromFilter () {
             dispatch(restoreSavedStates())
         }
-        function getCurrentFilteredItem (state) {
-            const filteredItemsList = getFilterItemList(state)
-            const filterCursor = getFilterCursor(state)
-            // console.log(filteredItemsList, filterCursor, filteredItemsList[filterCursor])
-            if (filteredItemsList && filteredItemsList.length && filteredItemsList.length > 0) {
-                return filteredItemsList[filterCursor]
-            }
-            return {}
-        }
+
         return (state, ownProps) => {
             const {netsIds, hostsIds} = getRootIds(state)
-            const filterStore = getFilterResults(state)
             const filteredItemsList = getFilterItemList(state)
             const filterCursor = getFilterCursor(state)
             const currentFilteredItem = getCurrentFilteredItem(state)
-            const result = {
+            return {
                 forceUpdateRootItems,
                 forceUpdateRootIds,
                 invalidateElementsInStore,
@@ -231,14 +221,12 @@ class IpamTable extends Component {
                 showCurrentFilteredItem,
                 getCurrentFilteredItem,
                 restoreStateFromFilter,
-                filterStore,
                 filteredItemsList,
                 filterCursor,
                 currentFilteredItem,
                 netsIds,
                 hostsIds
             }
-            return result
         }
 }
 
@@ -259,7 +247,6 @@ IpamTable.propTypes = {
         ip_path: PropTypes.string
     }),
     showCurrentFilteredItem: PropTypes.func,
-    filterStore: PropTypes.object,
     filteredItemsList: PropTypes.array,
     filterCursor: PropTypes.number,
 

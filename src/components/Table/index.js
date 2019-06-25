@@ -40,6 +40,8 @@ class Table extends PureComponent {
         bodyCellWidth: 0,
     }
 
+    scrollPosition = {}
+
     tableStyles = {
         //LVL 0
         container: {
@@ -544,22 +546,22 @@ class Table extends PureComponent {
         if (prevData !== data) {
              await this.updateData()
         }
-        // this.scrollToRow(this.props.scrollPosition)
-        // console.log('table didupdate', this.getRowRef(scrollPosition.id, scrollPosition.rec_type),prevScrollPosition !== scrollPosition ? 'true' : 'false')
-        const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
-        if (scrollPosition && scrollPosition.id && targetRow) {
-            const bodyContainer = this.tableRefs.bodyContainer
-            // console.log('scroll to ', targetRow)
-            this.scrollAt(bodyContainer, targetRow, 'top', 60)
+        if (!scrollPosition) {
+            this.scrollPosition = {}
         }
-        // if (prevScrollPosition !== scrollPosition) {
-        //     const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
-        //     if (scrollPosition && scrollPosition.id && targetRow) {
-        //         const bodyContainer = this.tableRefs.bodyContainer
-        //         // console.log('scroll to ', targetRow)
-        //         this.scrollAt(bodyContainer, targetRow, 'top', 60)
-        //     }
-        // }
+        if (scrollPosition && this.scrollPosition.id === scrollPosition.id && this.scrollPosition.rec_type === scrollPosition.rec_type) return
+        if (scrollPosition && scrollPosition.id ) {
+            const targetRow = this.getRowRef(scrollPosition.id, scrollPosition.rec_type)
+            // console.log('scroll to ', targetRow, this.tableRefs.bodyContainer)
+            if (targetRow && targetRow.current) {
+                this.scrollPosition = {
+                    id: scrollPosition.id,
+                    rec_type: scrollPosition.rec_type
+                }
+                const bodyContainer = this.tableRefs.bodyContainer
+                this.scrollAt(bodyContainer, targetRow, 'top', 60)
+            }
+        }
     }
 
     componentWillUnmount() {

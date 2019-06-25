@@ -1,6 +1,5 @@
 const DEVELOPED_BASE_URL = 'netcmdb-loc.rs.ru:8082'
 // console.log('location ', window.location)
-// const DEVELOPED_BASE_URL = 'netcmdb.rs.ru'
 const BASE_URL = (() => {
     const protocol = window.location.protocol
     const hostname = window.location.hostname
@@ -10,6 +9,8 @@ const BASE_URL = (() => {
 })()
 
 export const URL_REQUEST_ROOT_ELEMENTS_ID = `${BASE_URL}/ipam/rootElements.json`
+// export const URL_REQUEST_NET_ELEMENTS_BY_ID = `http://netcmdb-loc.rs.ru:8082/ipam/netElementsByIds.json`
+// export const URL_REQUEST_HOST_ELEMENTS_BY_ID = `http://netcmdb-loc.rs.ru:8082/ipam/hostElementsByIds.json`
 export const URL_REQUEST_NET_ELEMENTS_BY_ID = `${BASE_URL}/ipam/netElementsByIds.json`
 export const URL_REQUEST_HOST_ELEMENTS_BY_ID = `${BASE_URL}/ipam/hostElementsByIds.json`
 export const URL_FILTERED_SEARCH = `${BASE_URL}/ipam/search.json`

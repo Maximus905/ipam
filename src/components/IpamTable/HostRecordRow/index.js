@@ -33,16 +33,16 @@ class HostRecordRow extends PureComponent {
                 <Row {...rowProps}>
                     <Column>{this.lvlIndent()}...loading</Column>
                     <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
-                    <Column>...loading</Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
+                    <Column></Column>
                 </Row>
             );
         } else {
