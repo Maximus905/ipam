@@ -39,6 +39,7 @@ const AppNavbar = () => {
                     <MenuItem eventKey={5.1} href={URL.reportPhoneByModels}>По моделям</MenuItem>
                     <MenuItem eventKey={5.2} href={URL.reportPhoneByClusters}>По кластерам</MenuItem>
                     <MenuItem eventKey={5.3} href={URL.reportPhoneByNotUsed}>По неиспользуемым</MenuItem>
+                    <MenuItem eventKey={5.3} href={URL.reportPhoneByAgentLicenses}>По Agent Licenses</MenuItem>
                 </NavDropdown>
 
             </Nav>

@@ -7,6 +7,7 @@ export const reports = "/report/new"
 export const reportPhoneByModels = "/report/phoneStatsReport"
 export const reportPhoneByClusters = "/report/phoneStatsByClustersReport"
 export const reportPhoneByNotUsed = "/report/phoneStatsByNotUsedReport"
+export const reportPhoneByAgentLicenses = "/report/agentsPhonesStatsReport"
 
 export const dictRegions = "/admin/regions"
 export const dictCities = "/admin/cities"
